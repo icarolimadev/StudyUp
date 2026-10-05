@@ -1,4 +1,4 @@
-# StudyUp
+    # StudyUp
 
 Base de uma aplicação de estudos com foco em celular, construída com HTML, CSS e JavaScript puro em módulos.
 
