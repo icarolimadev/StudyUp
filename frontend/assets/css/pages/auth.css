@@ -123,8 +123,9 @@
   margin-top: 36px;
 }
 
-/* Compensa os 2 px extras do botão Voltar para alinhar os dois formulários. */
-.Auth-panel--signup .Auth-intro {
+/* Compensa os 2 px extras do botão Voltar para alinhar os títulos das telas. */
+.Auth-panel--signup .Auth-intro,
+.Auth-panel--recovery .Auth-intro {
   margin-top: 34px;
 }
 
@@ -146,6 +147,36 @@
 
 .Auth-form {
   margin-top: 30px;
+}
+
+/* Recuperação: mantém o espaço livre da referência sem fixar a altura do conteúdo.
+   O formulário continua acessível por rolagem em telas baixas ou com zoom. */
+.AuthUP-recovery-icon {
+  display: grid;
+  place-items: center;
+  width: 74px;
+  height: 74px;
+  margin-top: 24px;
+  border-radius: 24px;
+  background: #fffae0;
+  color: var(--color-primary);
+}
+
+.AuthUP-recovery-icon svg {
+  width: 30px;
+  height: 30px;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.Auth-panel--recovery .Auth-form {
+  margin-top: 26px;
+}
+
+.Auth-panel--recovery .Auth-button {
+  margin-top: 18px;
 }
 
 .Auth-fields {
@@ -327,8 +358,11 @@
 }
 
 .Auth-text-action {
+  display: inline-flex;
+  align-items: center;
   min-height: 28px;
   font-weight: 600;
+  text-decoration: none;
 }
 
 .Auth-terms {

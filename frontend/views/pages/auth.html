@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="Entre na sua conta StudyUp ou crie uma conta para começar a organizar seus estudos.">
+  <meta name="description" content="Entre na sua conta StudyUp, crie uma conta ou recupere o acesso para organizar seus estudos.">
   <meta name="theme-color" content="#ffffff">
   <title>Sua conta | StudyUp</title>
   <!-- Mesma tipografia das páginas Study e UP. -->
@@ -74,8 +74,8 @@
             <input class="Auth-checkbox" id="Auth-remember" name="remember" type="checkbox" checked>
             <span>Lembrar de mim</span>
           </label>
-          <!-- Recuperação será conectada ao fluxo real, sem criar uma rota inexistente. -->
-          <button class="Auth-text-action" id="Auth-recover" type="button" disabled>Esqueceu a senha?</button>
+          <!-- Abre a recuperação no mesmo documento, usando apenas HTML e CSS. -->
+          <a class="Auth-text-action" id="Auth-recover" href="#recuperar-senha">Esqueceu a senha?</a>
         </div>
 
         <!-- Reservado para mensagens de retorno; preencher e retirar hidden no futuro. -->
@@ -96,7 +96,7 @@
 
     <section class="Auth-panel Auth-panel--signup" id="criar-conta" aria-labelledby="Auth-signup-title" tabindex="-1">
       <header class="Auth-header">
-        <a class="Auth-back" href="landing.html#etapa-3" aria-label="Voltar para a apresentação">
+        <a class="Auth-back" href="../../index.html" aria-label="Voltar para a apresentação">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m14 6-6 6 6 6" /></svg>
         </a>
         <a class="AuthUP-brand" href="../../index.html" aria-label="StudyUp — página inicial">
@@ -187,6 +187,57 @@
         <span>Continuar com Google</span>
       </button>
       <p class="Auth-switch">Já tem uma conta? <a href="#entrar">Entrar</a></p>
+    </section>
+    <!-- Recuperação: reutiliza a identidade Auth e a seleção de telas por :target. -->
+    <section class="Auth-panel Auth-panel--recovery" id="recuperar-senha" aria-labelledby="Auth-recovery-title" tabindex="-1">
+      <header class="Auth-header">
+        <a class="Auth-back" href="#entrar" aria-label="Voltar para entrar na conta">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m14 6-6 6 6 6" /></svg>
+        </a>
+        <!-- Mantém o símbolo atual da marca, compartilhado com login e cadastro. -->
+        <a class="AuthUP-brand" href="../../index.html" aria-label="StudyUp — página inicial">
+          <span class="AuthUP-mark" aria-hidden="true">
+            <svg class="AuthUP-symbol" viewBox="0 0 48 48" fill="none">
+              <path d="M5 18 24 9l19 9-19 9L5 18Zm8 5v9c0 3 5 7 11 7s11-4 11-7v-9M43 18v12" />
+            </svg>
+            <span class="AuthUP-plus">+</span>
+          </span>
+          <span class="AuthUP-wordmark" aria-hidden="true">Study<span class="AuthUP-accent">Up</span></span>
+        </a>
+      </header>
+
+      <div class="Auth-intro">
+        <h1 class="Auth-title" id="Auth-recovery-title">Recuperar senha</h1>
+        <p class="Auth-subtitle">Informe seu e-mail e enviaremos um código de verificação.</p>
+      </div>
+
+      <!-- Envelope decorativo: SVG com traço verde sobre o cartão amarelo claro. -->
+      <div class="AuthUP-recovery-icon" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none">
+          <rect x="3.5" y="6" width="25" height="20" rx="3.5" />
+          <path d="m5 8 11 9L27 8" />
+        </svg>
+      </div>
+
+      <!-- Integração futura: definir action, conectar o envio e remover disabled.
+           O botão submit desativado também impede envio implícito por Enter.
+           Nenhum código é enviado e nenhum sucesso é simulado nesta etapa. -->
+      <form class="Auth-form" id="Auth-recovery-form" method="post" aria-labelledby="Auth-recovery-title">
+        <div class="Auth-field">
+          <label class="Auth-label" for="Auth-recovery-email">E-mail</label>
+          <div class="Auth-input-wrap">
+            <svg class="Auth-field-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="14" rx="3" /><path d="m4 7 8 6 8-6" />
+            </svg>
+            <input class="Auth-input" id="Auth-recovery-email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="icaro.lima@exemplo.com" aria-describedby="Auth-recovery-email-help" required>
+          </div>
+          <p class="Auth-field-help" id="Auth-recovery-email-help">Informe um e-mail válido, como nome@exemplo.com.</p>
+        </div>
+
+        <!-- Reservado para o retorno da futura integração, sem mensagens fictícias. -->
+        <p class="Auth-feedback" id="Auth-recovery-feedback" role="status" aria-live="polite" hidden></p>
+        <button class="Auth-button" id="Auth-recovery-submit" type="submit" disabled>Enviar código</button>
+      </form>
     </section>
   </main>
 </body>
