@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Conheça o StudyUp: organize atividades, acompanhe projetos e fique por dentro dos seus prazos.">
+  <meta name="theme-color" content="#ffffff">
+  <title>Conheça o StudyUp</title>
+  <!-- Mesma família tipográfica escolhida na porta de entrada. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/main.css">
+</head>
+<body class="UP-page">
+  <!-- UP identifica a apresentação; Sdudent identifica as ilustrações.
+       Os links de fragmento e :target no CSS alternam as etapas sem JavaScript.
+       Sem fragmento (ou com um desconhecido), a primeira etapa fica visível. -->
+  <main class="UP-shell" aria-label="Apresentação do StudyUp">
+    <section class="UP-step UP-step--first" id="etapa-1" aria-labelledby="UP-title-1" tabindex="-1">
+      <header class="UP-header">
+        <a class="UP-skip" href="#etapa-3">Pular</a>
+      </header>
+
+      <!-- Etapa 1: calendário. A ilustração é decorativa e não repete a leitura do texto. -->
+      <div class="UP-visual" aria-hidden="true">
+        <div class="Sdudent-scene">
+          <div class="Sdudent-circle"></div>
+          <div class="Sdudent-paper">
+            <svg class="Sdudent-icon" viewBox="0 0 40 40" fill="none">
+              <rect x="6" y="9" width="28" height="26" rx="4" />
+              <path d="M13 5v8m14-8v8M6 17h28" />
+            </svg>
+            <span class="Sdudent-highlight"></span>
+          </div>
+          <div class="Sdudent-progress">
+            <svg class="Sdudent-check" viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" /></svg>
+            <span class="Sdudent-progress-line"></span>
+            <span class="Sdudent-progress-line Sdudent-progress-line--short"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="UP-content">
+        <p class="UP-eyebrow">Tudo em um só lugar</p>
+        <h1 class="UP-title" id="UP-title-1">
+          <span class="UP-title-line">Conquiste seus objetivos</span>
+          <span class="UP-title-line">com mais organização</span>
+        </h1>
+        <p class="UP-description">Gerencie suas atividades, trabalhos, provas e projetos de forma simples e eficiente.</p>
+
+        <!-- Indicadores são links com área de toque ampliada e nome acessível.
+             A etapa ativa é identificada por forma, cor e aria-current. -->
+        <nav class="UP-pagination" aria-label="Etapas da apresentação">
+          <a class="UP-dot" href="#etapa-1" aria-label="Etapa 1 de 3: organização" aria-current="step"><span></span></a>
+          <a class="UP-dot" href="#etapa-2" aria-label="Etapa 2 de 3: projetos"><span></span></a>
+          <a class="UP-dot" href="#etapa-3" aria-label="Etapa 3 de 3: lembretes"><span></span></a>
+        </nav>
+        <div class="UP-actions">
+          <a class="UP-button" href="#etapa-2">Continuar</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="UP-step" id="etapa-2" aria-labelledby="UP-title-2" tabindex="-1">
+      <header class="UP-header">
+        <a class="UP-skip" href="#etapa-3">Pular</a>
+      </header>
+
+      <!-- Etapa 2: alvo. A estrutura compartilhada mantém as proporções dos cartões. -->
+      <div class="UP-visual" aria-hidden="true">
+        <div class="Sdudent-scene">
+          <div class="Sdudent-circle"></div>
+          <div class="Sdudent-paper">
+            <svg class="Sdudent-icon" viewBox="0 0 40 40" fill="none">
+              <circle cx="20" cy="20" r="14" />
+              <circle cx="20" cy="20" r="6" />
+              <path d="m20 20 13-13" />
+            </svg>
+            <span class="Sdudent-highlight"></span>
+          </div>
+          <div class="Sdudent-progress">
+            <svg class="Sdudent-check" viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" /></svg>
+            <span class="Sdudent-progress-line"></span>
+            <span class="Sdudent-progress-line Sdudent-progress-line--short"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="UP-content">
+        <p class="UP-eyebrow">Evolua no seu ritmo</p>
+        <h1 class="UP-title" id="UP-title-2">
+          <span class="UP-title-line">Transforme grandes</span>
+          <span class="UP-title-line">projetos em pequenas</span>
+          <span class="UP-title-line">conquistas</span>
+        </h1>
+        <p class="UP-description">Organize cada etapa, acompanhe seu progresso e mantenha o foco no que importa.</p>
+
+        <nav class="UP-pagination" aria-label="Etapas da apresentação">
+          <a class="UP-dot" href="#etapa-1" aria-label="Etapa 1 de 3: organização"><span></span></a>
+          <a class="UP-dot" href="#etapa-2" aria-label="Etapa 2 de 3: projetos" aria-current="step"><span></span></a>
+          <a class="UP-dot" href="#etapa-3" aria-label="Etapa 3 de 3: lembretes"><span></span></a>
+        </nav>
+        <div class="UP-actions">
+          <a class="UP-button" href="#etapa-3">Continuar</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="UP-step" id="etapa-3" aria-labelledby="UP-title-3" tabindex="-1">
+      <!-- Na última etapa, Pular leva ao login, pois não há outra apresentação. -->
+      <header class="UP-header">
+        <a class="UP-skip" href="auth.html#entrar">Pular</a>
+      </header>
+
+      <!-- Etapa 3: sino de lembretes. Os ícones são vetoriais e não carregam imagens. -->
+      <div class="UP-visual" aria-hidden="true">
+        <div class="Sdudent-scene">
+          <div class="Sdudent-circle"></div>
+          <div class="Sdudent-paper">
+            <svg class="Sdudent-icon" viewBox="0 0 40 40" fill="none">
+              <path d="M6 30c4-4 5-7 5-14a9 9 0 0 1 18 0c0 7 1 10 5 14H6Zm11 6h6" />
+            </svg>
+            <span class="Sdudent-highlight"></span>
+          </div>
+          <div class="Sdudent-progress">
+            <svg class="Sdudent-check" viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" /></svg>
+            <span class="Sdudent-progress-line"></span>
+            <span class="Sdudent-progress-line Sdudent-progress-line--short"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="UP-content">
+        <p class="UP-eyebrow">Nada fica para trás</p>
+        <h1 class="UP-title" id="UP-title-3">
+          <span class="UP-title-line">Lembretes inteligentes</span>
+          <span class="UP-title-line">para todos os seus prazos</span>
+        </h1>
+        <p class="UP-description">Receba avisos no momento certo e chegue preparado para cada entrega e prova.</p>
+
+        <nav class="UP-pagination" aria-label="Etapas da apresentação">
+          <a class="UP-dot" href="#etapa-1" aria-label="Etapa 1 de 3: organização"><span></span></a>
+          <a class="UP-dot" href="#etapa-2" aria-label="Etapa 2 de 3: projetos"><span></span></a>
+          <a class="UP-dot" href="#etapa-3" aria-label="Etapa 3 de 3: lembretes" aria-current="step"><span></span></a>
+        </nav>
+        <!-- Destinos reservados para a atividade 3; nenhuma autenticação é simulada. -->
+        <div class="UP-actions">
+          <a class="UP-button" href="auth.html#criar-conta">Criar conta</a>
+          <a class="UP-button UP-button--secondary" href="auth.html#entrar">Já tenho uma conta</a>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

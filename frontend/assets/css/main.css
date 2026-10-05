@@ -6,5 +6,6 @@
 @import url("./base/utilities.css");
 @import url("./components/button.css");
 
-/* Porta de entrada; as próximas atividades terão seus próprios estilos. */
+/* Estilos específicos de cada página, após a base compartilhada. */
 @import url("./pages/study.css");
+@import url("./pages/landing.css");

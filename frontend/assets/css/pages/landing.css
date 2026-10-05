@@ -1,0 +1,338 @@
+/* UP — apresentação em três etapas.
+   Estilos isolados para preservar os ajustes da porta de entrada Study. */
+.UP-page {
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 1rem;
+}
+
+.UP-shell {
+  width: 100%;
+  max-width: 438px;
+  margin-inline: auto;
+}
+
+/* Cada etapa ocupa uma tela, mas pode crescer com zoom ou conteúdo maior.
+   display: none também retira as etapas inativas da navegação por teclado. */
+.UP-step {
+  position: relative;
+  display: none;
+  grid-template-rows: auto minmax(360px, 1fr) auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: max(10px, env(safe-area-inset-top))
+    max(24px, env(safe-area-inset-right))
+    max(30px, env(safe-area-inset-bottom))
+    max(24px, env(safe-area-inset-left));
+  scroll-margin-top: 0;
+}
+
+/* Primeira etapa como padrão; fragmentos válidos selecionam a etapa desejada.
+   Os seletores não dependem do JS que será implementado posteriormente. */
+.UP-step--first,
+.UP-step:target {
+  display: grid;
+}
+
+.UP-shell:has(.UP-step:target) .UP-step:not(:target) {
+  display: none;
+}
+
+/* A seção recebe foco ao navegar por fragmentos. Seus links têm foco próprio. */
+.UP-step:focus {
+  outline: none;
+}
+
+.UP-header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.UP-skip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 44px;
+  min-height: 44px;
+  color: var(--color-muted);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+/* Pontos decorativos permanecem na mesma altura nas três referências. */
+.UP-step::before,
+.UP-step::after {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  content: "";
+}
+
+.UP-step::before {
+  top: 135px;
+  left: 64px;
+  width: 18px;
+  height: 18px;
+  background: var(--color-accent);
+}
+
+.UP-step::after {
+  top: 100px;
+  right: 56px;
+  width: 12px;
+  height: 12px;
+  background: #40b98b;
+}
+
+.UP-visual {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+}
+
+/* Sdudent — ilustração compartilhada. Porcentagens preservam as proporções
+   do círculo e dos cartões quando a largura do celular muda. */
+.Sdudent-scene {
+  position: relative;
+  width: min(100%, 342px);
+  aspect-ratio: 342 / 400;
+}
+
+.Sdudent-circle {
+  position: absolute;
+  top: 18.75%;
+  left: 13.45%;
+  width: 73.1%;
+  aspect-ratio: 1;
+  border: 1px solid var(--color-orbit);
+  border-radius: 50%;
+  background: #fffae0;
+}
+
+.Sdudent-paper {
+  position: absolute;
+  top: 31%;
+  left: 30.1%;
+  display: grid;
+  place-items: center;
+  width: 39.77%;
+  height: 38.5%;
+  border: 1px solid #edf0ec;
+  border-radius: 28px;
+  background: var(--color-surface);
+  box-shadow: 0 12px 30px rgb(58 75 48 / 6%);
+  transform: rotate(-7deg);
+}
+
+.Sdudent-icon {
+  width: 40px;
+  height: 40px;
+  color: var(--color-primary);
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.Sdudent-highlight {
+  position: absolute;
+  bottom: 18%;
+  left: 25%;
+  width: 50%;
+  height: 7px;
+  border-radius: 8px;
+  background: #ffeca0;
+}
+
+.Sdudent-progress {
+  position: absolute;
+  top: 72.5%;
+  right: 10%;
+  width: 38%;
+  height: 23.5%;
+  border-radius: 22px;
+  background: var(--color-primary);
+  box-shadow: 0 14px 30px rgb(37 42 59 / 5%);
+  transform: rotate(6deg);
+}
+
+.Sdudent-check {
+  position: absolute;
+  top: 17%;
+  left: 15%;
+  width: 20px;
+  height: 20px;
+  stroke: var(--color-surface);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.Sdudent-progress-line {
+  position: absolute;
+  top: 48%;
+  left: 14%;
+  width: 55%;
+  height: 6px;
+  border-radius: 8px;
+  background: #80c8ae;
+}
+
+.Sdudent-progress-line--short {
+  top: 63%;
+  width: 34%;
+}
+
+.UP-content {
+  text-align: center;
+}
+
+.UP-eyebrow {
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  line-height: 18px;
+  text-transform: uppercase;
+}
+
+.UP-title {
+  margin-top: 16px;
+  color: var(--color-text);
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -1.1px;
+  line-height: 34px;
+  text-wrap: initial;
+}
+
+.UP-title-line {
+  display: block;
+}
+
+.UP-description {
+  margin-top: 10px;
+  color: var(--color-muted);
+  font-size: 15.5px;
+  font-weight: 400;
+  line-height: 25px;
+}
+
+/* Indicadores visuais pequenos, com links mais altos para facilitar o toque.
+   A cápsula verde marca a etapa atual sem depender somente da cor. */
+.UP-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: 10px;
+}
+
+.UP-dot {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  min-height: 44px;
+  border-radius: 8px;
+}
+
+.UP-dot span {
+  width: 7px;
+  height: 7px;
+  border-radius: 8px;
+  background: #d8d6e2;
+}
+
+.UP-dot[aria-current="step"] {
+  width: 30px;
+}
+
+.UP-dot[aria-current="step"] span {
+  width: 24px;
+  background: var(--color-primary);
+}
+
+.UP-actions {
+  display: grid;
+  gap: 10px;
+}
+
+/* Os botões são links porque todas as ações desta atividade são navegação. */
+.UP-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 12px 16px;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  background: var(--color-primary);
+  box-shadow: 0 9px 20px rgb(27 137 99 / 18%);
+  color: var(--color-surface);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 24px;
+  text-decoration: none;
+}
+
+.UP-button--secondary {
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  box-shadow: 0 5px 15px rgb(37 42 59 / 3%);
+  color: var(--color-text);
+}
+
+.UP-page a:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) {
+  .UP-button:hover {
+    background: var(--color-primary-hover);
+  }
+
+  .UP-button--secondary:hover {
+    background: #f4faf7;
+  }
+
+  .UP-skip:hover {
+    color: var(--color-primary);
+  }
+}
+
+/* Menores larguras mantêm os textos inteiros e permitem rolagem vertical. */
+@media (max-width: 359px) {
+  .UP-step {
+    grid-template-rows: auto minmax(320px, 1fr) auto;
+    padding-right: max(20px, env(safe-area-inset-right));
+    padding-left: max(20px, env(safe-area-inset-left));
+  }
+
+  .UP-title {
+    font-size: 24px;
+    letter-spacing: -1px;
+    line-height: 30px;
+  }
+
+  .UP-description {
+    font-size: 14px;
+    line-height: 23px;
+  }
+}
+
+/* Na horizontal ou em janelas baixas, nada fica preso fora da área rolável. */
+@media (max-height: 700px) {
+  .UP-step {
+    grid-template-rows: auto auto auto;
+  }
+
+  .Sdudent-scene {
+    width: min(100%, 280px);
+  }
+
+  .UP-content {
+    margin-top: 20px;
+  }
+}
