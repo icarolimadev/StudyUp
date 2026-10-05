@@ -1,0 +1,475 @@
+/* Auth — autenticação mobile-first, sem alterar as páginas Study e UP.
+   A altura é livre para permitir rolagem no cadastro e com o teclado aberto. */
+.Auth-page {
+  min-width: 0;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 1rem;
+}
+
+.Auth-shell {
+  width: 100%;
+  max-width: 438px;
+  margin-inline: auto;
+}
+
+.Auth-panel {
+  display: none;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: max(34px, env(safe-area-inset-top))
+    max(24px, env(safe-area-inset-right))
+    max(32px, env(safe-area-inset-bottom))
+    max(24px, env(safe-area-inset-left));
+}
+
+/* Navegação declarativa: só a tela selecionada participa da leitura e do foco. */
+.Auth-panel--default,
+.Auth-panel:target {
+  display: block;
+}
+
+.Auth-shell:has(.Auth-panel:target) .Auth-panel:not(:target),
+.Auth-page [hidden] {
+  display: none !important;
+}
+
+.Auth-panel:focus {
+  outline: none;
+}
+
+.Auth-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-height: 42px;
+}
+
+.Auth-back {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: #f8f8fb;
+  color: var(--color-text);
+}
+
+.Auth-back svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* AuthUP — assinatura compacta da marca, com o símbolo atual do projeto. */
+.AuthUP-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.AuthUP-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: var(--color-primary);
+  box-shadow: 0 8px 18px rgb(27 137 99 / 20%);
+  color: var(--color-surface);
+}
+
+.AuthUP-symbol {
+  width: 25px;
+  height: 25px;
+  stroke: currentColor;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transform: translate(-1px, 1px);
+}
+
+.AuthUP-plus {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  color: var(--color-accent);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.AuthUP-wordmark {
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -.7px;
+  line-height: 1;
+}
+
+.AuthUP-accent {
+  color: var(--color-accent);
+}
+
+.Auth-intro {
+  margin-top: 36px;
+}
+
+/* Compensa os 2 px extras do botão Voltar para alinhar os dois formulários. */
+.Auth-panel--signup .Auth-intro {
+  margin-top: 34px;
+}
+
+.Auth-title {
+  color: var(--color-text);
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: -1.2px;
+  line-height: 40px;
+  text-wrap: initial;
+}
+
+.Auth-subtitle {
+  margin-top: 10px;
+  color: var(--color-muted);
+  font-size: 15.5px;
+  line-height: 25px;
+}
+
+.Auth-form {
+  margin-top: 30px;
+}
+
+.Auth-fields {
+  display: grid;
+  gap: 20px;
+}
+
+.Auth-field {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.Auth-label {
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+/* Campos com 16 px evitam o zoom automático ao digitar no celular.
+   Os ícones não capturam cliques destinados aos campos. */
+.Auth-input-wrap {
+  position: relative;
+  min-width: 0;
+}
+
+.Auth-input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 52px;
+  padding: 13px 16px 13px 46px;
+  border: 1px solid var(--color-border);
+  border-radius: 15px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+/* Exemplos menores reproduzem a referência; o texto digitado mantém 16 px. */
+.Auth-input::placeholder {
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 1;
+}
+
+.Auth-field-icon {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  width: 20px;
+  height: 20px;
+  color: #9997ae;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.Auth-input-wrap--action .Auth-input {
+  padding-right: 48px;
+}
+
+.Auth-password-toggle {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--color-muted);
+}
+
+.Auth-password-toggle svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+/* Instruções associadas aos campos: exibidas somente após interação inválida.
+   O atributo aria-invalid também permite erros enviados pelo futuro backend. */
+.Auth-field-help {
+  display: none;
+  color: #b42318;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.Auth-field:has(.Auth-input:user-invalid) .Auth-field-help,
+.Auth-field:has(.Auth-input[aria-invalid="true"]) .Auth-field-help {
+  display: block;
+}
+
+.Auth-input:user-invalid,
+.Auth-input[aria-invalid="true"] {
+  border-color: #b42318;
+}
+
+.Auth-options,
+.Auth-terms {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  margin-top: 10px;
+  color: var(--color-muted);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.Auth-options {
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.Auth-check-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 28px;
+  cursor: pointer;
+}
+
+/* Checkbox HTML real: seleção, foco e teclado são nativos, sem JavaScript. */
+.Auth-checkbox {
+  appearance: none;
+  display: grid;
+  place-content: center;
+  flex: none;
+  width: 19px;
+  height: 19px;
+  margin: 0;
+  border: 1px solid #aaa8bb;
+  border-radius: 6px;
+  background: var(--color-surface);
+  cursor: pointer;
+}
+
+.Auth-checkbox:checked {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+}
+
+.Auth-checkbox:checked::before {
+  width: 9px;
+  height: 5px;
+  margin-top: -2px;
+  border-bottom: 2px solid white;
+  border-left: 2px solid white;
+  transform: rotate(-45deg);
+  content: "";
+}
+
+.Auth-checkbox:user-invalid {
+  border-color: #b42318;
+}
+
+.Auth-text-action,
+.Auth-terms-link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-primary);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.Auth-text-action {
+  min-height: 28px;
+  font-weight: 600;
+}
+
+.Auth-terms {
+  flex-wrap: wrap;
+}
+
+.Auth-terms-link {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.Auth-button,
+.AuthUP-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 16px;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 24px;
+  text-align: center;
+}
+
+.Auth-button {
+  margin-top: 14px;
+  background: var(--color-primary);
+  box-shadow: 0 9px 20px rgb(27 137 99 / 18%);
+  color: var(--color-surface);
+}
+
+/* Os controles desativados preservam a composição visual da referência.
+   A propriedade disabled bloqueia sua execução até a integração futura. */
+.Auth-page button:disabled {
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+.Auth-feedback {
+  margin-top: 12px;
+  color: #b42318;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.Auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  color: #aaa8b9;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.Auth-divider::before,
+.Auth-divider::after {
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+  content: "";
+}
+
+.AuthUP-google {
+  margin-top: 16px;
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  box-shadow: 0 5px 15px rgb(37 42 59 / 3%);
+  color: var(--color-text);
+}
+
+.AuthUP-google-icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+
+.Auth-switch {
+  margin-top: 28px;
+  color: var(--color-muted);
+  font-size: 14px;
+  line-height: 24px;
+  text-align: center;
+}
+
+.Auth-switch a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Foco explícito nos controles ativos; as telas inativas não entram na tabulação. */
+.Auth-page :is(a, button, input):focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) {
+  .Auth-switch a:hover {
+    text-decoration: underline;
+  }
+
+  .Auth-back:hover {
+    background: #efeff5;
+  }
+
+  .Auth-button:enabled:hover {
+    background: var(--color-primary-hover);
+  }
+}
+
+@media (max-width: 359px) {
+  .Auth-panel {
+    padding-right: max(20px, env(safe-area-inset-right));
+    padding-left: max(20px, env(safe-area-inset-left));
+  }
+
+  .Auth-title {
+    font-size: 30px;
+  }
+
+  .Auth-subtitle {
+    font-size: 14px;
+  }
+}
+
+/* Mantém a seleção perceptível também no modo de alto contraste do sistema. */
+@media (forced-colors: active) {
+  .Auth-checkbox {
+    appearance: auto;
+  }
+
+  .Auth-checkbox::before {
+    content: none;
+  }
+}

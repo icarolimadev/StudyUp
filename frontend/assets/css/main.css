@@ -9,3 +9,4 @@
 /* Estilos específicos de cada página, após a base compartilhada. */
 @import url("./pages/study.css");
 @import url("./pages/landing.css");
+@import url("./pages/auth.css");
