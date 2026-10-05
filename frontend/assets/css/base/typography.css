@@ -1,0 +1,5 @@
+body { font-family: var(--font-family); font-size: var(--font-size-base); line-height: 1.6; }
+h1, h2 { line-height: 1.2; text-wrap: balance; }
+h1 { font-size: clamp(1.8rem, 6vw, 2.75rem); }
+h2 { font-size: 1.25rem; }
+p { color: var(--color-muted); }
