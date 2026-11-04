@@ -10,14 +10,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/main.css">
+  <link rel="stylesheet" href="../../src/css/main.css">
 </head>
 <body class="Auth-page">
   <!-- Auth identifica telas e formulários; AuthUP identifica a marca e a opção Google.
        Os fragmentos correspondem aos destinos da apresentação, sem JavaScript.
        Sem fragmento válido, o estado padrão é Entrar. -->
   <main class="Auth-shell" aria-label="Conta StudyUp">
-    <section class="Auth-panel Auth-panel--default" id="entrar" aria-labelledby="Auth-login-title" tabindex="-1">
+    <section class="Auth-panel Auth-panel--default" id="auth-login" aria-labelledby="Auth-login-title" tabindex="-1">
       <header class="Auth-header">
         <!-- Símbolo de formatura já adotado na porta de entrada do projeto. -->
         <a class="AuthUP-brand" href="../../index.html" aria-label="StudyUp — página inicial">
@@ -75,7 +75,7 @@
             <span>Lembrar de mim</span>
           </label>
           <!-- Abre a recuperação no mesmo documento, usando apenas HTML e CSS. -->
-          <a class="Auth-text-action" id="Auth-recover" href="#recuperar-senha">Esqueceu a senha?</a>
+          <a class="Auth-text-action" id="Auth-recover" href="#auth-recovery">Esqueceu a senha?</a>
         </div>
 
         <!-- Reservado para mensagens de retorno; preencher e retirar hidden no futuro. -->
@@ -91,10 +91,10 @@
         </svg>
         <span>Continuar com Google</span>
       </button>
-      <p class="Auth-switch">Não tem uma conta? <a href="#criar-conta">Criar conta</a></p>
+      <p class="Auth-switch">Não tem uma conta? <a href="#auth-signup">Criar conta</a></p>
     </section>
 
-    <section class="Auth-panel Auth-panel--signup" id="criar-conta" aria-labelledby="Auth-signup-title" tabindex="-1">
+    <section class="Auth-panel Auth-panel--signup" id="auth-signup" aria-labelledby="Auth-signup-title" tabindex="-1">
       <header class="Auth-header">
         <a class="Auth-back" href="../../index.html" aria-label="Voltar para a apresentação">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m14 6-6 6 6 6" /></svg>
@@ -186,12 +186,12 @@
         </svg>
         <span>Continuar com Google</span>
       </button>
-      <p class="Auth-switch">Já tem uma conta? <a href="#entrar">Entrar</a></p>
+      <p class="Auth-switch">Já tem uma conta? <a href="#auth-login">Entrar</a></p>
     </section>
     <!-- Recuperação: reutiliza a identidade Auth e a seleção de telas por :target. -->
-    <section class="Auth-panel Auth-panel--recovery" id="recuperar-senha" aria-labelledby="Auth-recovery-title" tabindex="-1">
+    <section class="Auth-panel Auth-panel--recovery" id="auth-recovery" aria-labelledby="Auth-recovery-title" tabindex="-1">
       <header class="Auth-header">
-        <a class="Auth-back" href="#entrar" aria-label="Voltar para entrar na conta">
+        <a class="Auth-back" href="#auth-login" aria-label="Voltar para entrar na conta">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m14 6-6 6 6 6" /></svg>
         </a>
         <!-- Mantém o símbolo atual da marca, compartilhado com login e cadastro. -->
