@@ -20,6 +20,10 @@
 .Subjects-actions button { flex: 1; }
 .Subjects-cancel { min-height: 3.25rem; padding: .75rem; border: 1px solid var(--color-border); border-radius: 1rem; background: white; color: var(--color-text); cursor: pointer; }
 .Subjects-feedback { margin-top: 1rem; color: var(--color-primary-hover); font-size: .875rem; overflow-wrap: anywhere; }
+.Subjects-card-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: .8rem; }
+.Subjects-card-actions button { min-height: 2.75rem; padding: .5rem .85rem; border: 1px solid var(--color-border); border-radius: .7rem; background: white; color: var(--color-primary-hover); cursor: pointer; }
+.Subjects-card-actions .Subjects-delete { color: #a33352; }
+.Subjects button:disabled { opacity: .6; cursor: wait; }
 .Subjects :is(button, input, select):focus-visible { outline: 3px solid var(--color-primary); outline-offset: 3px; }
 @media (min-width: 768px) {
   .Subjects-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }

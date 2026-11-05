@@ -1,6 +1,4 @@
-import { demoSubjects, demoActivities, demoToday } from '../models/demo-state.js';
-import { createSubject, subjectSummary } from '../models/disciplinas-model.js';
-import { formatDay, shiftDay } from '../models/inicio-demo.js';
+import { accountRequest } from '../components/account-session.js';
 
 export function mountSubjects() {
   const list = document.getElementById('subjects-list');
@@ -9,9 +7,16 @@ export function mountSubjects() {
   const name = document.getElementById('subject-name');
   const color = document.getElementById('subject-color');
   const open = document.getElementById('subjects-new');
+  const cancel = document.getElementById('subject-cancel');
+  const retry = document.getElementById('subjects-retry');
   const error = document.getElementById('subject-error');
   const feedback = document.getElementById('subject-feedback');
+  const status = document.getElementById('subjects-status');
+  const empty = document.getElementById('subjects-empty');
   const submit = form.querySelector('[type="submit"]');
+  let subjects = [];
+  let editingId = null;
+  let busy = false;
 
   function element(tag, className, text) {
     const node = document.createElement(tag);
@@ -20,90 +25,115 @@ export function mountSubjects() {
     return node;
   }
 
-  function dayLabel(day) {
-    if (day === demoToday) return 'Hoje';
-    if (day === shiftDay(demoToday, 1)) return 'Amanhã';
-    return formatDay(day, { day: 'numeric', month: 'short' });
+  function setBusy(value) {
+    busy = value;
+    [open, cancel, retry, submit, color, ...list.querySelectorAll('button')].forEach(button => { button.disabled = value; });
+    name.readOnly = value;
+    form.setAttribute('aria-busy', String(value));
   }
 
   function render() {
-    document.getElementById('subjects-empty').hidden = demoSubjects.length > 0;
-    list.replaceChildren(...demoSubjects.map(subject => {
-      const summary = subjectSummary(subject, demoActivities, demoToday);
+    empty.hidden = subjects.length > 0;
+    list.replaceChildren(...subjects.slice().sort((a, b) => a.name.localeCompare(b.name, 'pt-BR')).map(subject => {
       const card = element('li', 'Subjects-card');
       const header = element('div', 'Subjects-card-header');
-      const icon = element('span', `Subjects-icon Subjects-icon--${subject.color}`);
+      const tone = ['green', 'blue', 'pink', 'gold'].includes(subject.color) ? subject.color : 'green';
+      const icon = element('span', `Subjects-icon Subjects-icon--${tone}`);
       icon.setAttribute('aria-hidden', 'true');
       const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-      svg.setAttribute('class', 'App-icon');
-      use.setAttribute('href', '#icon-book');
-      svg.append(use);
-      icon.append(svg);
+      svg.setAttribute('class', 'App-icon'); use.setAttribute('href', '#icon-book');
+      svg.append(use); icon.append(svg);
       const text = element('div', 'Subjects-card-text');
-      const count = summary.pendingCount;
-      text.append(element('h2', '', subject.name), element('p', '', `${count} ${count === 1 ? 'atividade pendente' : 'atividades pendentes'}`));
+      const count = subject.pendingCount || 0;
+      text.append(element('h2', '', subject.name), element('p', '', `${count} ${count === 1 ? 'tarefa pendente no banco' : 'tarefas pendentes no banco'}`));
       header.append(icon, text);
-      const next = element('div', 'Subjects-next');
-      next.append(element('span', '', 'Próxima atividade'));
-      next.append(element('strong', '', summary.next
-        ? `${summary.next.title} • ${dayLabel(summary.next.date)}, ${summary.next.time}`
-        : 'Nenhuma atividade prevista'));
-      card.append(header, next);
+      const actions = element('div', 'Subjects-card-actions');
+      const edit = element('button', 'Subjects-edit', 'Editar');
+      edit.type = 'button'; edit.dataset.editId = String(subject.id);
+      edit.setAttribute('aria-label', `Editar ${subject.name}`);
+      edit.addEventListener('click', () => showForm(subject));
+      const remove = element('button', 'Subjects-delete', 'Excluir');
+      remove.type = 'button'; remove.setAttribute('aria-label', `Excluir ${subject.name}`);
+      remove.addEventListener('click', () => removeSubject(subject));
+      actions.append(edit, remove); card.append(header, actions);
       return card;
     }));
   }
 
   function clearErrors() {
     error.hidden = true;
-    [name, color].forEach(field => {
-      field.removeAttribute('aria-invalid');
-      field.removeAttribute('aria-describedby');
-    });
+    [name, color].forEach(field => { field.removeAttribute('aria-invalid'); field.removeAttribute('aria-describedby'); });
+  }
+
+  function showForm(subject = null) {
+    if (busy) return;
+    form.reset(); clearErrors(); editingId = subject?.id ?? null;
+    document.getElementById('subject-form-title').textContent = subject ? 'Editar disciplina' : 'Nova disciplina';
+    if (subject) { name.value = subject.name; color.value = subject.color || 'green'; }
+    panel.hidden = false; open.setAttribute('aria-expanded', 'true');
+    feedback.textContent = ''; name.focus();
   }
 
   function closeForm() {
-    form.reset();
-    clearErrors();
-    panel.hidden = true;
+    const previousId = editingId;
+    editingId = null; form.reset(); clearErrors(); panel.hidden = true;
     open.setAttribute('aria-expanded', 'false');
-    open.focus();
+    (list.querySelector(`[data-edit-id="${previousId}"]`) || open).focus();
   }
 
-  open.addEventListener('click', () => {
-    panel.hidden = false;
-    open.setAttribute('aria-expanded', 'true');
-    feedback.textContent = '';
-    name.focus();
-  });
-  document.getElementById('subject-cancel').addEventListener('click', closeForm);
-  form.addEventListener('input', clearErrors);
-  form.addEventListener('submit', event => {
-    event.preventDefault();
-    if (submit.disabled) return;
-    submit.disabled = true;
-    clearErrors();
-    try {
-      const result = createSubject(demoSubjects, { name: name.value, color: color.value });
-      if (result.errors) {
-        error.textContent = Object.values(result.errors).join(' ');
-        error.hidden = false;
-        Object.keys(result.errors).forEach(key => {
-          const field = key === 'name' ? name : color;
-          field.setAttribute('aria-invalid', 'true');
-          field.setAttribute('aria-describedby', 'subject-error');
-        });
-        (result.errors.name ? name : color).focus();
-        return;
-      }
-      render();
-      closeForm();
-      feedback.textContent = `“${result.subject.name}” cadastrada nesta demonstração. Você já pode selecioná-la ao adicionar uma tarefa.`;
-    } finally {
-      submit.disabled = false;
-    }
-  });
+  function failureMessage(failure) {
+    return failure.name === 'TypeError' || failure.name === 'TimeoutError'
+      ? 'Não foi possível confirmar a operação. Confira a conexão e atualize a lista antes de tentar novamente.'
+      : failure.message;
+  }
 
-  render();
-  return render;
+  async function load() {
+    if (busy) return;
+    setBusy(true); status.textContent = 'Carregando disciplinas…'; retry.hidden = true; empty.hidden = true;
+    try {
+      const data = await accountRequest('/api/disciplinas');
+      subjects = data.subjects; render(); status.textContent = '';
+    } catch (failure) {
+      list.replaceChildren(); status.textContent = failureMessage(failure); retry.hidden = false;
+    } finally { setBusy(false); }
+  }
+
+  async function removeSubject(subject) {
+    if (busy || !window.confirm(`Excluir a disciplina “${subject.name}”? Essa ação não pode ser desfeita.`)) return;
+    setBusy(true); feedback.textContent = 'Excluindo disciplina…';
+    try {
+      await accountRequest(`/api/disciplinas/${subject.id}`, { method: 'DELETE' });
+      subjects = subjects.filter(item => item.id !== subject.id); render(); setBusy(false);
+      if (editingId === subject.id) closeForm(); else open.focus();
+      feedback.textContent = `“${subject.name}” excluída da sua conta.`;
+    } catch (failure) { feedback.textContent = failureMessage(failure); }
+    finally { setBusy(false); }
+  }
+
+  open.addEventListener('click', () => showForm());
+  cancel.addEventListener('click', closeForm);
+  retry.addEventListener('click', load);
+  form.addEventListener('input', clearErrors);
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (busy) return;
+    setBusy(true); clearErrors(); submit.textContent = 'Salvando…';
+    const id = editingId;
+    try {
+      const { subject } = await accountRequest(id ? `/api/disciplinas/${id}` : '/api/disciplinas', {
+        method: id ? 'PATCH' : 'POST', body: { name: name.value, color: color.value },
+      });
+      if (id) subjects = subjects.map(item => item.id === id ? { ...item, ...subject } : item);
+      else subjects.push(subject);
+      render(); setBusy(false); closeForm(); status.textContent = ''; retry.hidden = true;
+      feedback.textContent = `“${subject.name}” ${id ? 'atualizada' : 'cadastrada'} e salva na sua conta.`;
+    } catch (failure) {
+      error.textContent = failureMessage(failure); error.hidden = false;
+      const invalid = [name, color].filter(field => Object.hasOwn(failure.fields || {}, field.name));
+      invalid.forEach(field => { field.setAttribute('aria-invalid', 'true'); field.setAttribute('aria-describedby', 'subject-error'); });
+      setBusy(false); (invalid[0] || name).focus();
+    } finally { setBusy(false); submit.textContent = 'Salvar disciplina'; }
+  });
+  return load;
 }
