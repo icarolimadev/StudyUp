@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtempSync, mkdirSync, copyFileSync, writeFileSync, readFileSync, existsSync, statSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
 // Estes testes usam um sudo falso em uma pasta temporária: não alteram MySQL.
@@ -28,7 +28,7 @@ process.stdin.on('end', () => {
     encoding: 'utf8', timeout: 5000,
     env: { ...process.env, PATH: `${join(root, 'bin')}:${process.env.PATH}`, ...overrides },
   });
-  return { root, run, envPath: join(root, '.env') };
+  return { root, run, envPath: join(root, 'env/.env') };
 }
 
 test('setup gera segredo protegido sem exibi-lo', t => {
@@ -39,11 +39,13 @@ test('setup gera segredo protegido sem exibi-lo', t => {
   const password = contents.match(/DB_PASSWORD="([^"]+)"/)[1];
   assert.ok(password.length >= 64);
   assert.equal(statSync(envPath).mode & 0o777, 0o600);
+  assert.equal(statSync(dirname(envPath)).mode & 0o777, 0o700);
   assert.ok(!`${result.stdout}${result.stderr}`.includes(password));
 });
 
 test('setup preserva .env existente', t => {
   const { run, envPath } = fixture(t);
+  mkdirSync(dirname(envPath), { recursive: true });
   writeFileSync(envPath, 'EXISTING=yes');
   assert.equal(run().status, 1);
   assert.equal(readFileSync(envPath, 'utf8'), 'EXISTING=yes');
@@ -52,6 +54,15 @@ test('setup preserva .env existente', t => {
 test('setup não cria .env se já existe usuário da aplicação', t => {
   const { run, envPath } = fixture(t, { FAKE_DB_USERS: '1' });
   assert.equal(run().status, 1);
+  assert.equal(existsSync(envPath), false);
+});
+
+test('setup preserva também configuração antiga na raiz', t => {
+  const { root, run, envPath } = fixture(t);
+  const legacy = join(root, '.env');
+  writeFileSync(legacy, 'LEGACY=yes');
+  assert.equal(run().status, 1);
+  assert.equal(readFileSync(legacy, 'utf8'), 'LEGACY=yes');
   assert.equal(existsSync(envPath), false);
 });
 

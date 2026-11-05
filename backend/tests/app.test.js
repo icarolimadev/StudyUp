@@ -38,7 +38,7 @@ test('GET /api/status retorna JSON e informa banco não configurado', async () =
 test('o mesmo servidor entrega HTML, CSS e módulos do frontend', async () => {
   for (const [path, contentType, marker] of [
     ['/', /text\/html/, '<title>StudyUp</title>'],
-    ['/views/pages/app.html', /text\/html/, 'id="disciplinas"'],
+    ['/views/pages/auth.html', /text\/html/, 'id="Auth-login-form"'],
     ['/src/css/main.css', /text\/css/, 'disciplinas.css'],
     ['/src/js/layouts/app-layout.js', /javascript/, 'mountSubjects'],
   ]) {
@@ -61,7 +61,7 @@ test('rotas desconhecidas e métodos não implementados não simulam sucesso', a
 });
 
 test('arquivos internos do projeto não ficam públicos', async () => {
-  for (const path of ['/backend/server.js', '/package.json', '/.env', '/.env.example', '/.git/config', '/docs/plano-mvp.md', '/node_modules/express/package.json']) {
+  for (const path of ['/backend/server.js', '/package.json', '/env/.env', '/env/backup.sql', '/env/senha.txt', '/.env', '/.env.example', '/.git/config', '/docs/plano-mvp.md', '/node_modules/express/package.json']) {
     const response = await fetch(`${baseUrl}${path}`);
     assert.equal(response.status, 404, path);
   }

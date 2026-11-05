@@ -6,3 +6,6 @@ dist/
 coverage/
 .DS_Store
 *.log
+
+# Credenciais locais: todo o conteúdo desta pasta é privado.
+/env/
