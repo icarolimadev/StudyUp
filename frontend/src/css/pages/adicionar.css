@@ -1,0 +1,41 @@
+.Add-types { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .5rem; margin: 1.5rem 0; }
+.Add-type { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .35rem; padding: .75rem .2rem; border: 1px solid transparent; border-radius: 1rem; background: #f7f7fa; color: var(--app-muted); font-size: .75rem; }
+.Add-type small { font-size: .65rem; }
+.Add-type--selected { border-color: var(--color-primary); background: var(--app-soft); color: var(--color-primary-hover); }
+.Add-type--selected > span:first-child { font-size: 1.5rem; }
+.Add-form { display: grid; gap: 1.25rem; }
+.Add-form label { display: grid; gap: .5rem; min-width: 0; font-size: .9rem; font-weight: 600; }
+.Add-form :is(input:not([type="radio"]):not([type="checkbox"]), textarea, select) { width: 100%; min-width: 0; min-height: 3.25rem; padding: .85rem; border: 1px solid var(--color-border); border-radius: 1rem; background: white; color: var(--color-text); font-size: 1rem; font-weight: 400; }
+.Add-form textarea { resize: vertical; min-height: 7rem; }
+.Add-form ::placeholder { color: var(--app-muted); opacity: 1; }
+.Add-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+.Add-help { color: var(--app-muted); font-size: .75rem; }
+.Add-priorities { border: 0; padding: 0; margin: 0; min-width: 0; }
+.Add-priorities legend { padding: 0; margin-bottom: .5rem; font-size: .9rem; font-weight: 600; }
+.Add-priority-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
+.Add-priority-options label { position: relative; cursor: pointer; }
+.Add-priority-options input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.Add-priority-options span { display: grid; place-items: center; min-height: 2.75rem; border: 1px solid transparent; border-radius: .85rem; background: #f7f7fa; color: var(--app-muted); font-size: .8rem; }
+.Add-priority-options input:checked + span { border-color: var(--color-primary); background: var(--app-soft); color: var(--color-primary-hover); }
+.Add-priority-options input:focus-visible + span { outline: 3px solid var(--color-primary); outline-offset: 3px; }
+.Add-reminder { padding-block: .5rem 1rem; border-bottom: 1px solid var(--color-border); }
+.Add-form .Add-switch-label { display: flex; justify-content: space-between; align-items: center; gap: 1rem; min-height: 2.75rem; }
+.Add-switch-label input { appearance: none; width: 2.8rem; height: 1.65rem; margin: 0; flex: none; border: 1px solid #77788a; border-radius: 2rem; background: #77788a; cursor: pointer; }
+.Add-switch-label input::before { content: ''; display: block; width: 1.25rem; height: 1.25rem; margin: .13rem; border-radius: 50%; background: white; }
+.Add-switch-label input:checked { background: var(--color-primary); border-color: var(--color-primary); }
+.Add-switch-label input:checked::before { transform: translateX(1.1rem); }
+.Add-submit { min-height: 3.25rem; padding: .85rem 1rem; border: 0; border-radius: 1rem; background: var(--color-primary); color: white; font-weight: 700; box-shadow: 0 8px 18px rgb(27 137 99 / 16%); cursor: pointer; }
+.Add-submit:disabled { opacity: .65; cursor: wait; }
+.Add-error { color: #b42318; font-size: .875rem; }
+.Add-form [aria-invalid="true"] { border-color: #b42318 !important; }
+.Add-result { margin-top: 1.5rem; padding: 1rem; border: 1px solid var(--color-primary); border-radius: 1rem; background: #f0faf5; overflow-wrap: anywhere; }
+.Add-result p { color: var(--color-primary-hover); }
+.Add :is(input, textarea, select, button):focus-visible { outline: 3px solid var(--color-primary); outline-offset: 3px; }
+.Tasks-details { margin-top: .75rem; color: var(--app-muted); font-size: .8rem; }
+.Tasks-details summary { cursor: pointer; min-height: 2rem; }
+.Tasks-details p { margin-top: .5rem; color: inherit; white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 359px) { .Add-row { grid-template-columns: 1fr; } }
+@media (forced-colors: active) {
+  .Add-switch-label input { appearance: auto; }
+  .Add-switch-label input::before { display: none; }
+}
