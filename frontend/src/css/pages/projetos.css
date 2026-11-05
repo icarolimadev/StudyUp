@@ -1,0 +1,28 @@
+.Projects-filters { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: 1.5rem; }
+.Projects-filters button { min-height: 2.75rem; padding: .65rem .85rem; border: 0; border-radius: .9rem; background: #f7f7fa; color: var(--app-muted); font-size: .75rem; font-weight: 600; cursor: pointer; }
+.Projects-filters button[aria-pressed="true"] { background: var(--color-primary); color: white; }
+.Projects-list { display: grid; gap: 1rem; list-style: none; padding: 0; margin: 0; }
+.Projects-card { min-width: 0; padding: 1.1rem; border: 1px solid var(--color-border); border-radius: 1.25rem; box-shadow: 0 5px 18px rgb(37 42 59 / 3%); }
+.Projects-card-top { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .85rem; }
+.Projects-icon { display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 1rem; background: var(--app-soft); color: var(--color-primary-hover); }
+.Projects-status { padding: .25rem .55rem; border-radius: .65rem; font-size: .7rem; font-weight: 600; background: var(--app-soft); color: var(--color-primary-hover); }
+.Projects-status.is-done { background: #ebfaf3; }
+.Projects-card h2 { font-size: 1.125rem; overflow-wrap: anywhere; }
+.Projects-subject { margin-top: .35rem; font-size: .75rem; color: var(--app-muted); }
+.Projects-progress-label { display: flex; justify-content: space-between; gap: .5rem; margin-top: 1rem; font-size: .75rem; color: var(--app-muted); }
+.Projects-progress-label strong { color: var(--color-primary-hover); }
+.Projects-progress { display: block; width: 100%; height: .45rem; margin-top: .35rem; border: 0; border-radius: 1rem; overflow: hidden; appearance: none; background: #ffeca0; color: var(--color-primary); }
+.Projects-progress::-webkit-progress-bar { background: #ffeca0; border-radius: 1rem; }
+.Projects-progress::-webkit-progress-value { background: var(--color-primary); border-radius: 1rem; }
+.Projects-progress::-moz-progress-bar { background: var(--color-primary); border-radius: 1rem; }
+.Projects-due { margin-top: .85rem; color: var(--app-muted); font-size: .75rem; }
+.Projects-details { margin-top: .8rem; border-top: 1px solid var(--color-border); }
+.Projects-details summary { min-height: 2.75rem; padding-top: .75rem; cursor: pointer; font-size: .8rem; color: var(--color-primary-hover); }
+.Projects-steps { list-style: none; padding: 0; margin: .25rem 0 0; }
+.Projects-step label { display: flex; align-items: center; gap: .65rem; min-height: 2.75rem; padding-block: .35rem; font-size: .8rem; cursor: pointer; }
+.Projects-step input { flex: none; width: 1.25rem; height: 1.25rem; margin: 0; accent-color: var(--color-primary); }
+.Projects-step span { overflow-wrap: anywhere; }
+.Projects-step input:checked + span { text-decoration: line-through; color: var(--app-muted); }
+.Projects-help { margin-top: 1rem; color: var(--app-muted); font-size: .75rem; }
+.Projects :is(button, input, summary):focus-visible { outline: 3px solid var(--color-primary); outline-offset: 3px; }
+@media (min-width: 768px) { .Projects-list { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; } }
