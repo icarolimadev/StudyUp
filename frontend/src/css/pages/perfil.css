@@ -1,0 +1,25 @@
+.Profile-header-actions { display: flex; align-items: center; gap: .65rem; }
+.Profile-header-link { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border: 2px solid white; border-radius: .9rem; background: var(--app-soft); color: var(--color-primary-hover); box-shadow: 0 4px 14px rgb(37 42 59 / 10%); }
+.Profile-identity { display: grid; justify-items: center; gap: .65rem; text-align: center; }
+.Profile-avatar { display: grid; place-items: center; width: 5rem; height: 5rem; background: #ffeca0; color: var(--color-primary); border: 3px solid white; border-radius: 1.6rem; box-shadow: 0 4px 16px rgb(37 42 59 / 10%); }
+.Profile-avatar .App-icon { width: 2rem; height: 2rem; }
+.Profile-identity h2 { font-size: 1.4rem; }
+.Profile-identity p { font-size: .8rem; color: var(--app-muted); overflow-wrap: anywhere; max-width: 100%; }
+.Profile-role { padding: .2rem .65rem; border-radius: .6rem; background: var(--app-soft); color: var(--color-primary-hover); font-size: .7rem; font-weight: 600; }
+.Profile-demo { margin-block: 1.25rem; font-size: .75rem; text-align: center; color: var(--app-muted); }
+.Profile-options { border: 1px solid var(--color-border); border-radius: 1.2rem; padding: 0 .85rem; }
+.Profile-option, .Profile-personal summary { display: flex; align-items: center; gap: .75rem; width: 100%; min-height: 3.75rem; padding: .65rem 0; border: 0; background: transparent; font-size: .8rem; font-weight: 600; color: var(--color-text); text-align: left; }
+.Profile-option { border-top: 1px solid var(--color-border); }
+.Profile-option small { margin-left: auto; color: var(--app-muted); font-weight: 400; font-size: .65rem; }
+.Profile-option-icon { display: grid; place-items: center; flex: none; width: 2.2rem; height: 2.2rem; border-radius: .75rem; background: var(--app-soft); color: var(--color-primary-hover); }
+.Profile-option-icon .App-icon { width: 1.2rem; height: 1.2rem; }
+.Profile-personal summary { cursor: pointer; list-style: none; }
+.Profile-personal summary::-webkit-details-marker { display: none; }
+.Profile-personal summary::after { content: '›'; margin-left: auto; font-size: 1.2rem; }
+.Profile-personal[open] summary::after { transform: rotate(90deg); }
+.Profile-info { margin: .5rem 0; font-size: .8rem; }
+.Profile-info dt { color: var(--app-muted); }
+.Profile-info dd { margin: .2rem 0 .75rem; overflow-wrap: anywhere; }
+.Profile-note { margin: .7rem 0; font-size: .75rem; color: var(--app-muted); }
+.Profile-logout { width: 100%; min-height: 3.25rem; margin-top: 1.2rem; border: 0; border-radius: 1rem; background: #fff0f4; color: #a33352; font-weight: 600; }
+.Profile :is(button, summary):focus-visible { outline: 3px solid var(--color-primary); outline-offset: 3px; }
