@@ -1,8 +1,10 @@
 # StudyUp — plano de entrega do MVP em três dias
 
-## Acompanhamento atual — 04/11/2026
+## Acompanhamento atual — 05/11/2026
 
 Este arquivo passa a registrar as tarefas realizadas e suas verificações. O diagnóstico original abaixo descreve o estado anterior às correções registradas aqui. Planejamento não significa funcionalidade implementada.
+
+**Situação atual:** núcleo local implementado até o bloco 7.5: contas, disciplinas e tarefas persistidas, interface integrada, resumo e Agenda diária reais. Projetos/notificações continuam como demonstração. Pendências de entrega: testes da equipe em dispositivos/rede, backup/restauração, documentação/evidências finais e ensaio. As seções anteriores preservam o estado histórico de cada entrega.
 
 ### Etapa 1 — corrigir a base visual
 
@@ -226,9 +228,9 @@ Conforme o formato de mentoria, a integração foi dividida em blocos pequenos. 
 
 - [x] 7.1. Servidor Express local, arquivos públicos, rota/controller de status e testes HTTP.
 - [x] 7.2. Preparar MySQL, esquema inicial e conexão do backend (validado no servidor real em 04/11/2026).
-- [ ] 7.3. Cadastro, hash de senha, login/logout e sessão.
-- [ ] 7.4. APIs de disciplinas e tarefas, validações e autorização por usuário; completar edição/exclusão previstas.
-- [ ] 7.5. Integrar frontend à API, substituir dados de demonstração e testar persistência/separação entre contas.
+- [x] 7.3. Cadastro, hash, login/logout e sessão local concluídos nos blocos 7.3a–7.3b.
+- [x] 7.4. APIs de disciplinas (7.4a) e tarefas (7.4b), com validação/autorização e operações previstas, concluídas.
+- [x] 7.5. Disciplinas, tarefas, cadastro/edição, Início e Agenda diária integrados às APIs e testados com persistência/separação entre contas.
 
 Referências técnicas consultadas: [instalação do Express](https://expressjs.com/en/starter/installing/), [servidor inicial](https://expressjs.com/en/starter/hello-world/) e [arquivos estáticos](https://expressjs.com/en/starter/static-files/).
 
@@ -428,6 +430,182 @@ Implementação autorizada na conversa. O escopo desta revisão foi a aplicaçã
 
 **Próximo trabalho pendente:** retomar os blocos 7.3–7.5 de autenticação, APIs e persistência das telas, com validação no servidor e isolamento dos dados por usuário. A etapa 12 encerra a revisão desta prévia visual, não a entrega do MVP funcional completo.
 
+### Bloco 7.3a — cadastro real de usuários (05/11/2026)
+
+**Estado: cadastro integrado ao MySQL e verificado. Login, logout e sessão permanecem pendentes.**
+
+Após concluir as telas, retomamos o núcleo do MVP em um bloco pequeno. Fluxo explicado antes da implementação: formulário → rota → controller → validação/hash → model → MySQL → resposta ao formulário. Nenhuma dependência npm ou tabela nova foi necessária.
+
+| Arquivo | Papel e alteração |
+| --- | --- |
+| `backend/routes/auth-routes.js` | POST /api/auth/register; aceita JSON limitado a 8 KiB, recusa origem externa e trata JSON inválido/corpo excessivo. |
+| `backend/controllers/auth-controller.js` | Coordena validação, hash e gravação; retorna 201/400/409/429/503, sem senha, hash, sessão ou detalhes internos. Limita a dois cadastros simultâneos neste processo. |
+| `backend/validators/register-validator.js` | Valida tipos, nome de até 150 caracteres, e-mail de até 254, senha de 15 a 128 e confirmação; normaliza nome/e-mail sem alterar a senha. |
+| `backend/security/password.js` | Hash scrypt nativo do Node, N=32768/r=8/p=3, salt aleatório de 16 bytes e resultado de 64 bytes; grava algoritmo e parâmetros com o hash. |
+| `backend/models/user-model.js` | INSERT parametrizado na tabela usuarios; utiliza a restrição de e-mail único existente. |
+| `backend/app.js` | Conecta as rotas e expõe createApp para testes com dependências substituíveis; mantém a instância padrão usada pelo servidor. |
+| `frontend/views/pages/auth.html`, `frontend/src/js/pages/signup.js` | Cadastro real, comparação de senhas, envio JSON, bloqueio durante envio, mensagens de campo, sucesso e falha de rede; senha não vai para URL ou armazenamento do navegador. |
+| `frontend/src/css/pages/auth.css` | Feedback de sucesso, quebra de texto e indicação de envio. |
+| `backend/tests/register.test.js` | Testes de validação, hash, contrato HTTP, falhas e limite de concorrência. |
+| READMEs do projeto/backend | Estado atual, execução e contrato do cadastro. |
+
+O botão de cadastro só é habilitado após o módulo JavaScript carregar. Em erro, o formulário preserva a entrada; após sucesso, limpa os campos e informa que o login será disponibilizado no próximo bloco. Removida a exigência de aceite de termos inexistentes. Login, recuperação e Google continuam desativados. O arquivo antigo authNavigation.js não foi alterado.
+
+**Verificações:** `npm run db:check` confirmou conexão e tabelas; os 20 testes automatizados passaram (13 existentes e sete novos). Testes cobrem entradas inválidas, normalização, salt diferente para a mesma senha, recálculo do hash, ausência de credenciais/sessão na resposta, rejeição de propriedades extras, e-mail duplicado, banco indisponível, origem externa, JSON inválido, limite de corpo e concorrência.
+
+No Chrome em 360 px: senhas diferentes, nome com espaços rejeitado pelo servidor, foco no campo inválido, envio em andamento, criação real, e-mail duplicado, falha de rede com preservação dos campos e ausência de transbordamento. Uma conta fictícia com e-mail exclusivo foi criada, consultada após recarregar e removida ao final; conferidos nome e armazenamento apenas do hash. Não foram alteradas contas preexistentes. Captura temporária inspecionada em `/tmp/studyup-cadastro.png`; roteiro temporário em `/tmp/studyup-signup-cdp.mjs`.
+
+O primeiro teste de navegador detectou atraso do JavaScript enquanto a folha de fontes externas carregava. A página de conta passou a usar a fonte alternativa do sistema sem requisição ao Google. O teste foi repetido sem bloqueios artificiais de rede e passou. Servidor e navegador temporários encerrados.
+
+**Limites:** este bloco não cria sessão, valida posse do e-mail ou protege as telas de demonstração. A limitação de concorrência não substitui controle de tentativas por cliente em produção. O ambiente segue local; cadastro/login completo e segurança de sessão serão tratados no restante do bloco 7.3. Nenhum commit foi criado nesta implementação.
+
+**Como testar:** iniciar MySQL e executar `npm start`; abrir `/views/pages/auth.html#auth-signup`; cadastrar nome, e-mail fictício exclusivo e senha de 15 a 128 caracteres, com confirmação igual. Conferir POST 201 na aba Rede; repetir o e-mail e conferir 409. A conta criada manualmente permanece no MySQL. Executar `npm test` para a suíte sem contas reais. Não colocar senhas ou hashes em capturas.
+
+**Exercício de leitura:** acompanhar name/email/password desde signup.js até os parâmetros do INSERT. Explicar por que apenas name/email/passwordHash chegam ao model. **Pergunta de revisão:** por que precisamos validar no servidor mesmo com required e minlength no HTML? E por que cadastrar uma conta não equivale a estar autenticado?
+
+Referências: [scrypt no Node.js](https://nodejs.org/api/crypto.html#cryptoscryptpassword-salt-keylen-options-callback) e [armazenamento de senhas — OWASP](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html).
+
+### Bloco 7.3b — login, sessão e logout (05/11/2026)
+
+**Estado: autenticação local concluída e verificada. As atividades das telas continuam sendo demonstração.**
+
+Implementação autorizada após a revisão sobre validação no backend. Antes de editar, explicado o fluxo de login, cookie HttpOnly, sessão e dados reais de Perfil; informada a inclusão de express-session, mantendo Node/Express. Usado o MemoryStore apenas no ambiente local: sessão de até duas horas, perdida ao reiniciar o servidor; contas preservadas no MySQL.
+
+| Arquivos | Responsabilidade |
+| --- | --- |
+| `backend/security/password.js` | Verificar o hash scrypt com parâmetros conhecidos e timingSafeEqual; executar derivação equivalente para e-mail desconhecido. |
+| `backend/models/user-model.js` | Consultas parametrizadas por e-mail e pelo ID obtido da sessão. |
+| `backend/controllers/auth-controller.js` | Login com renovação/salvamento da sessão, consulta de conta e logout; respostas sem senha/hash; erro de credenciais genérico. |
+| `backend/security/session.js` | Cookie HttpOnly/SameSite=Lax, Secure em HTTPS direto, validade de duas horas também verificada no servidor, proteção de sessão e token CSRF. |
+| `backend/security/attempt-limit.js` | Até dez tentativas de login por IP em quinze minutos, mapa limitado e limpeza de entradas expiradas. Controller limita duas verificações simultâneas. |
+| `backend/routes/auth-routes.js`, `backend/app.js` | Rotas login/me/logout, origem e JSON, proteção da página interna e Cache-Control no-store. |
+| `frontend/src/js/pages/login.js`, `signup.js`, `frontend/views/pages/auth.html` | Login real, envio em andamento, feedback de erro, mostrar/ocultar senha e orientação para entrar após cadastro. Removida opção “lembrar de mim”, que não está implementada. |
+| `frontend/src/js/components/account-session.js`, `layouts/app-layout.js`, `frontend/views/pages/app.html` | Consultar sessão antes de mostrar telas, preencher Perfil/menu/saudação, sair com token CSRF, tratar falhas e revalidar ao voltar de outra aba. |
+| `frontend/src/css/layouts/app-layout.css` | Apresentar consulta da conta, falha e botão para tentar novamente. |
+| `backend/tests/login.test.js`, `app.test.js` | Cobertura de autenticação e atualização do teste de arquivos públicos, pois app.html passou a exigir sessão. |
+| `package.json`, `package-lock.json`, READMEs | Dependência express-session 1.19.0 e instruções atualizadas. |
+
+**Verificações:** 33 testes automatizados passaram. Cobertos senha correta/incorreta, hash malformado, e-mail desconhecido, validação, banco indisponível, duas contas independentes, ID do cliente ignorado, renovação/invalidação do cookie anterior, cookie adulterado, expiração no servidor, nova instância sem sessões anteriores, conta removida, excesso de tentativas e requisições de outra origem. Logout rejeita token ausente, incorreto ou pertencente a outra sessão; após sair, reutilizar o cookie recebe 401. HTML interno sem sessão redireciona, inclusive por caminho codificado equivalente.
+
+Chrome com MySQL real: conta fictícia exclusiva cadastrada para teste; acesso direto sem sessão redirecionou ao login; senha incorreta gerou mensagem; login correto abriu a aplicação; nome/e-mail reais apareceram no Perfil, menu e saudação; recarregar manteve a sessão; document.cookie não expôs o identificador HttpOnly; resposta de /me não incluiu hash. Falha de rede no logout mostrou erro e preservou a tela; nova tentativa encerrou a sessão e bloqueou novo acesso direto. Conta temporária removida ao final, sem alterar contas existentes. Captura mobile em `/tmp/studyup-perfil-autenticado.png` inspecionada, sem transbordamento em 360 px; roteiro temporário `/tmp/studyup-login-cdp.mjs`. Processos de teste encerrados.
+
+Conferidos IDs únicos/referências HTML e ARIA das duas páginas, sintaxe de todos os módulos JavaScript e git diff --check. Instalação npm não reportou vulnerabilidades. Nenhum commit novo foi criado nesta implementação.
+
+**Limites:** MemoryStore e limites em memória são somente para desenvolvimento; futura publicação exige armazenamento adequado de sessões e revisão de HTTPS/proxy. Sem recuperação de senha, login Google, verificação de e-mail ou edição de perfil. Tarefas/disciplinas/projetos/notificações continuam em memória do navegador, sem vinculação à conta; essa condição está visível na interface. A separação testada aqui é de sessões e identidade, não de tarefas ainda inexistentes na API.
+
+**Roteiro manual:** executar `npm ci` para instalar a nova dependência e `npm start` com MySQL disponível. Em `/views/pages/auth.html#auth-signup`, cadastrar uma conta e usar Entrar; testar senha incorreta e correta. Abrir Perfil, conferir nome/e-mail, recarregar e sair. Tentar abrir app.html novamente: deve voltar ao login. Para comparar contas, usar uma janela normal e outra anônima. Reiniciar o servidor deve exigir novo login, preservando o cadastro.
+
+**Revisão de aprendizagem:** o navegador guarda o identificador; o servidor guarda o usuário associado à sessão. Por que o backend deve obter usuario_id da sessão, em vez de aceitar um ID enviado pelo formulário? Exercício: acompanhar /login → session.userId → /me e localizar onde o hash deixa de fazer parte dos dados enviados à interface.
+
+Próximo bloco: **7.4 — APIs de disciplinas e tarefas**, começando pelas disciplinas e aplicando requireSession, token CSRF nas escritas e filtro por dono nas consultas. Referências: [express-session](https://expressjs.com/en/resources/middleware/session/) e [Node timingSafeEqual](https://nodejs.org/api/crypto.html#cryptotimingsafeequala-b).
+
+### Bloco 7.4a — disciplinas persistidas por usuário (05/11/2026)
+
+**Estado: CRUD de disciplinas completo, com API e tela integradas ao MySQL.**
+
+Implementação autorizada como próximo passo. Antes de editar, explicado o fluxo rota/controller/model e uso do usuário da sessão. Incluída a parte de integração da tela correspondente ao bloco 7.5 para permitir verificar a funcionalidade de ponta a ponta. Nenhuma tabela ou dependência nova.
+
+| Arquivos | Responsabilidade |
+| --- | --- |
+| `backend/models/subject-model.js` | Consultas parametrizadas de listagem/cadastro/edição/exclusão, todas restritas ao dono; contagem de tarefas pendentes reais. |
+| `backend/validators/subject-validator.js` | Nome normalizado de 1 a 100 caracteres, quatro cores, PATCH parcial e IDs positivos; rejeita campos extras. |
+| `backend/controllers/subject-controller.js` | Usa exclusivamente session.userId; trata duplicidade, vínculo, ausência e falha de banco sem expor SQL. |
+| `backend/routes/subject-routes.js`, `backend/app.js` | GET/POST /api/disciplinas, PATCH/DELETE /api/disciplinas/:id; sessão, token CSRF e no-store. |
+| `backend/security/json-request.js`, `auth-routes.js` | Extrai/reutiliza a proteção existente de origem/JSON e erros do parser sem mudar o contrato da autenticação. |
+| `frontend/src/js/components/account-session.js` | Helper accountRequest para chamadas autenticadas e token de escrita; sessão encerrada redireciona ao login. |
+| `frontend/src/js/pages/disciplinas.js` | Substitui exemplos pela API; carrega lista, cadastra, edita, pede confirmação antes de excluir e trata falhas. |
+| `frontend/views/pages/app.html`, `frontend/src/css/pages/disciplinas.css` | Botões Editar/Excluir, carregamento, atualização após falha e identificação de dados reais. |
+| `backend/tests/subjects.test.js`, READMEs | Cobertura da API/validação e instruções atualizadas. |
+
+Regras: nome único por usuário, incluindo equivalência da collation MySQL; outra conta pode usar o mesmo nome. Edição sem mudança também funciona. Registro de outro dono retorna o mesmo 404 de registro inexistente. A FK bloqueia exclusão com qualquer tarefa vinculada, sem apagar tarefas. Campos do cliente nunca definem o dono. O contador do cartão lê tarefas reais, não atividades de demonstração.
+
+**Verificações:** 38 testes automatizados passaram (cinco novos), cobrindo CRUD, validação, PATCH parcial, campos extras/ID do dono, isolamento entre sessões, CSRF/origem, duplicidade, vínculo e falha de banco, além da regressão de autenticação. Sintaxe de todos os módulos JavaScript, IDs/referências HTML/ARIA e git diff --check passaram.
+
+No MySQL real, duas contas fictícias exclusivas comprovaram: cadastro normalizado, nome duplicado recusado na mesma conta, mesmo nome permitido em outra conta, lista isolada, edição/exclusão de outro dono recusadas, edição sem alteração, persistência de cor, contagem de tarefa real e exclusão bloqueada pela FK. Após remover a tarefa temporária, exclusão retornou 204. Todos os usuários/disciplinas/tarefas do teste foram removidos usando somente os IDs dessas contas; nenhum dado preexistente foi alterado. Roteiro temporário: `/tmp/studyup-subjects-db.mjs`.
+
+No Chrome com MySQL: lista vazia inicial, cadastro, persistência após recarregar, duplicidade, edição, falha de rede preservando o texto, confirmação nativa cancelada/aceita, exclusão, erro de carregamento e botão Atualizar lista. Conferida largura de 320 px e captura `/tmp/studyup-disciplinas-reais.png`; roteiro `/tmp/studyup-subjects-cdp.mjs`. Conta temporária removida e processos encerrados. Não houve teste em aparelho físico/leitor de tela.
+
+**Limite desta entrega:** Início/Tarefas/Adicionar/Agenda ainda usam atividades e disciplinas de exemplo. Criar uma disciplina real ainda não a disponibiliza nesses formulários; conectar o seletor por ID faz parte da próxima integração. O aviso em Disciplinas distingue seus dados reais dos exemplos. Não se misturam atividades fictícias com os contadores reais.
+
+**Roteiro manual:** executar npm start, entrar e abrir Mais → Disciplinas; cadastrar uma disciplina, recarregar, editar nome/cor e conferir; cancelar uma exclusão e depois confirmá-la. Em outra conta/janela anônima, conferir que a lista é independente. Testes automatizados: npm test. Nenhum commit foi criado nesta etapa.
+
+**Revisão:** por que incluir `AND usuario_id = ?` no UPDATE/DELETE mesmo quando o registro tem um ID único? Exercício: localizar os parâmetros do DELETE no model e identificar de onde vem cada valor.
+
+**O que falta para o núcleo do MVP:**
+
+1. 7.4b — API de tarefas: cadastro/listagem/edição/exclusão/conclusão/reabertura, prazo e prioridade, validações e vínculo de disciplina pertencente ao mesmo dono.
+2. 7.5 — conectar Tarefas e Adicionar, buscar disciplinas reais por ID e substituir resumos/agenda de demonstração pelos dados persistidos; completar atraso, filtros e contadores previstos.
+3. Revisão final do fluxo completo com duas contas, recarregamento/novo login, datas e falhas de rede; atualizar evidências e documentação de entrega.
+4. Preparação da apresentação com a equipe: matriz de requisitos, diagrama, teste em outro dispositivo/rede, backup/restauração e ensaio.
+
+Projetos completos, notificações reais, calendário avançado, Docker e deploy continuam como evolução do recorte inicial, salvo exigência do professor.
+
+### Bloco 7.4b — API de tarefas (05/11/2026)
+
+**Estado: API de tarefas concluída, testada por HTTP e no MySQL real. Integração das telas permanece no bloco 7.5.**
+
+Implementação autorizada explicitamente. Antes da edição foi explicado o fluxo de validação/controller/model, o filtro pelo usuário da sessão e o vínculo apenas com disciplina do mesmo dono. Não houve alteração de frontend, esquema ou dependências.
+
+| Arquivos | Responsabilidade |
+| --- | --- |
+| `backend/routes/task-routes.js`, `backend/app.js` | GET/POST /api/tarefas e PATCH/DELETE /api/tarefas/:id; sessão, origem, CSRF, JSON de até 40 KiB e no-store. |
+| `backend/validators/task-validator.js` | Campos permitidos, título/prazo obrigatórios, descrição opcional de até 5.000 caracteres, disciplina nullable, prioridade/status e PATCH parcial. Rejeita dono e data de conclusão enviados pelo cliente. |
+| `backend/utils/task-dates.js` | Validação de datas reais, normalização com segundos, relógio explícito de Fortaleza e condição calculada de atraso. |
+| `backend/models/task-model.js` | SQL parametrizado, consultas filtradas pelo dono, disciplina validada e protegida por FK, transações e bloqueio da linha durante edição. |
+| `backend/controllers/task-controller.js` | Coordena listagem/cadastro/edição/exclusão, gera data de conclusão no servidor e respostas HTTP seguras. |
+| `backend/tests/tasks.test.js` | Validações, datas/virada de dia, CRUD, conclusão/reabertura, isolamento, sessão, CSRF e falhas. |
+| READMEs | Contrato completo e exemplo de teste manual pela API com helper autenticado. |
+
+O cadastro recebe title/deadline obrigatórios; description e subjectId opcionais; priority padrão media e status padrão pendente. Datas são locais de Fortaleza, sem Z/offset. O prazo aceita minuto ou segundo e retorna segundos. A lista é ordenada por prazo e ID; inclui subjectName, completedAt e overdue. Filtros permanecem planejados no frontend sobre a lista já restrita ao dono.
+
+Concluir preenche completedAt e elimina atraso; repetir conclusão preserva o timestamp. Reabrir limpa completedAt e recalcula atraso. O atraso é estritamente prazo anterior ao instante atual e estado pendente. Edição preserva campos omitidos; transação com SELECT FOR UPDATE impede perda de alterações simultâneas em campos distintos. Valores inválidos não geram atualização parcial. Desvincular disciplina usa subjectId null.
+
+**Verificações:** 45 testes automatizados passaram (sete novos). Cobertura inclui padrões, tipos e campos extras, datas inexistentes, anos bissextos, horários inválidos, limites de IDs, virada de ano/dia em Fortaleza, instante exato do prazo, tarefa concluída nunca atrasada, CRUD, PATCH parcial, conclusão/reabertura, disciplinas de outro dono, sessão/origem/token de outra conta, limite de corpo, JSON inválido e falha de banco sem vazamento de SQL.
+
+No MySQL real, com duas contas fictícias exclusivas: cadastro com título contendo aspas, descrição de 5.000 caracteres, prazo persistido exatamente, ordenação, isolamento de lista/edição/conclusão/exclusão, disciplina alheia recusada no cadastro e edição, rollback sem mudar o título, duas edições simultâneas preservadas, conclusão repetida após intervalo mantendo a data original, reabertura, contadores de disciplinas, bloqueio de exclusão mesmo com tarefa concluída, desvinculação e persistência após novo login. Exclusão e estado vazio conferidos. Registros temporários removidos apenas pelos IDs das contas criadas para o teste; contas preexistentes preservadas. Roteiro temporário `/tmp/studyup-tasks-db.mjs`; servidor de teste encerrado.
+
+Sintaxe dos novos módulos e git diff --check passaram. Não foi necessário teste visual: esta entrega não modifica as telas. Nenhum commit foi criado.
+
+**Como testar:** npm test para a suíte sem banco real. Para testar manualmente persistência, iniciar o servidor/MySQL, entrar na conta e seguir o exemplo de accountRequest no backend/README.md. Os dados criados por essa API ainda não aparecem na tela Tarefas, que segue em demonstração até 7.5.
+
+**Revisão:** por que uma conclusão repetida deve preservar completedAt? Exercício: localizar o filtro de dono no SELECT FOR UPDATE e explicar como ele impede editar a tarefa de outra conta. Depois localizar a regra que limpa completedAt ao reabrir.
+
+**Pendências atuais do MVP:** 7.5 — integrar Adicionar/Tarefas às APIs, buscar disciplinas reais por ID, disponibilizar edição/exclusão nas telas, atualizar Início/Agenda/filtros/contadores e substituir os exemplos desse núcleo. Depois, executar revisão ponta a ponta, fechar documentação/evidências, testar ambiente/rede/backup e ensaiar com a equipe. Projetos completos, envio de notificações, calendário avançado e deploy continuam fora do recorte inicial.
+
+### Bloco 7.5 — telas integradas ao núcleo persistido (05/11/2026)
+
+**Estado: fluxo funcional de contas → disciplinas → tarefas integrado e testado no Chrome/MySQL.**
+
+Implementação autorizada como próximo passo, com continuidade solicitada pelo usuário durante o trabalho. Explicado antes da edição que as telas passam a consultar um módulo compartilhado, com persistência/validação/autorização no backend. Nenhuma tabela, dependência ou nova API foi necessária.
+
+| Arquivos | Responsabilidade |
+| --- | --- |
+| `frontend/src/js/models/task-store.js` | Carrega tarefas/disciplinas reais, serializa gravações e mantém somente respostas confirmadas; protege contra leituras antigas sobrescrevendo dados recentes. |
+| `frontend/src/js/models/task-view.js` | Adapta campos da API, preserva segundos, traduz prioridade e aplica filtros por disciplina/estado/prioridade/período/busca, incluindo atraso em Fortaleza. |
+| `frontend/src/js/pages/adicionar.js` | Cadastro e edição no mesmo formulário, disciplina por ID, PATCH sem alterar conclusão, rascunho preservado em erro e confirmação de sucesso após gravar. |
+| `frontend/src/js/pages/tarefas.js` | Lista real, filtros combinados, editar/excluir com confirmação, concluir/reabrir e feedback visível de falha. |
+| `frontend/src/js/pages/inicio.js` | Resumo total/pendentes/atrasadas/concluídas da conta, semana/lista diária, próximas pendências e conclusão real. |
+| `frontend/src/js/pages/agenda.js` | Agenda diária das tarefas reais, prazos com segundos e indicação textual de atraso. |
+| `frontend/src/js/layouts/app-layout.js` | Carregamento/erro/atualização nas telas do núcleo, descarte de navegação obsoleta e rota #adicionar?editar=ID. |
+| `frontend/views/pages/app.html`, CSS de layout/tarefas | Estado e atrasadas nos filtros, cancelar edição, estados de dados, textos de persistência e ajuste de filtros em tela estreita. |
+| `backend/tests/task-view.test.js`, READMEs | Testes das regras de apresentação/sincronização e roteiro funcional atualizado. |
+
+Regras de apresentação: Início conta todas as tarefas da conta; a semana filtra apenas a lista diária. Próximos prazos lista até três pendências a partir de agora. Todas/Hoje incluem concluídas; Próximas inclui pendentes de amanhã até sete dias; Atrasadas somente pendentes com prazo anterior ao instante atual. Busca ignora acentos; disciplina usa ID, evitando vínculos por nome. Relógio de Fortaleza usado para datas/atraso; atualização periódica não substitui controles focados. Dados são recarregados ao navegar ou usar Atualizar dados.
+
+O cache em memória não substitui o banco: salvar só altera o estado confirmado após resposta da API. Falha de leitura mostra erro com nova tentativa, sem fingir lista vazia. Falhas de gravação preservam campos/estado anterior. A conta encerrada é redirecionada ao login. Tarefas inválidas/ausentes não abrem na edição. Lembretes estão desativados por não fazerem parte da API; Projetos e Notificações seguem explicitamente como demonstração, sem aparecer nos contadores/Agenda reais.
+
+**Verificações:** 50 testes automatizados passaram, incluindo cinco novos para adaptação/segundos, datas/atraso, combinação dos filtros sem mutação da lista, resposta antiga após gravação, recuperação após falha e duas leituras fora de ordem. Regressão de backend/autenticação/APIs incluída. IDs e referências HTML/ARIA, sintaxe de todos os módulos JavaScript e git diff --check passaram.
+
+Chrome com MySQL real, usando duas contas fictícias exclusivas: lista inicialmente vazia; criar disciplina; opção real no formulário; rejeitar título com espaços; cadastrar tarefa com descrição, prioridade, vínculo e segundos; exibir título com marcação como texto; recarregar mantendo dados; abrir edição e preservar segundos/descrição; falha de rede preservando rascunho; editar; concluir em Tarefas e reabrir no Início; conferir resumo, Agenda e contador da disciplina; criar tarefa atrasada e conferir filtros de atraso, disciplina/prioridade e busca vazia; cancelar/aceitar confirmação nativa de exclusão; falha de carregamento e nova tentativa; resposta 401 simulada no navegador redirecionando ao login. Expiração real no servidor permanece coberta pelos testes de sessão.
+
+Ao entrar na segunda conta no mesmo navegador, resumo e lista de disciplinas estavam vazios; ao voltar à primeira, sua tarefa editada permanecia. Contas/disciplinas/tarefas temporárias removidas somente pelos IDs dessas contas, sem alterar dados preexistentes. Servidor e Chrome temporários encerrados. Roteiro `/tmp/studyup-core-cdp.mjs`; captura `/tmp/studyup-tarefas-integradas.png` inspecionada. A conferência visual identificou filtros quebrando palavras em 320 px; corrigidos para quebra entre botões. Conferidas larguras 320/360/768/1280 px sem transbordamento horizontal na tela Tarefas. Sem aparelho físico, outro navegador ou leitor de tela nesta execução.
+
+**Roteiro manual:** npm start → cadastrar/entrar → Mais/Disciplinas → criar → Adicionar → escolher disciplina e salvar tarefa → Tarefas/Editar → concluir/reabrir → recarregar → conferir Início/Agenda → testar exclusão. Repetir com uma segunda conta em janela anônima. Usar dados fictícios e prazos relativos ao dia do teste. npm test repete a suíte sem escrever no banco real.
+
+**Revisão de aprendizagem:** por que o cache do frontend só deve mudar depois de a API confirmar a gravação? Exercício: acompanhar o ID da disciplina desde o select até o JSON enviado por saveTask e o filtro de dono no backend.
+
+**Pendências para a entrega escolar:** rodada final da equipe em celular/rede reais e nos critérios do professor; teste de instalação e backup/restauração; fechar matriz de requisitos, diagrama, evidências, slides e ensaio. Registrar uma versão/commits quando solicitado. Não foram criados commits nesta etapa. Projetos completos, envio de notificações, calendário avançado, recuperação por e-mail, Docker e deploy continuam como evolução do recorte original, salvo exigência expressa da avaliação.
+
 ### Organização dos commits locais (05/11/2026)
 
 Divisão autorizada em 12 commits por responsabilidade, com seis mensagens identificadas por `[Ícaro]` e seis por `[Laura]`. Os nomes nas mensagens são a identificação solicitada para a organização do trabalho; a autoria configurada no Git foi preservada. Nenhum push faz parte desta tarefa.
@@ -460,7 +638,7 @@ Cada etapa será explicada e terá suas alterações autorizadas antes da ediç�
 - [x] 4. Tarefas: lista, filtros e estados visuais com dados compartilhados em memória (conferência visual pendente).
 - [x] 5. Adicionar atividade: formulário de tarefa com validação e cadastro em memória (conferência no navegador pendente).
 - [x] 6. Disciplinas: lista, resumos e formulário de cadastro em memória (conferência no navegador pendente).
-- [ ] 7. Integrar o núcleo com Express e MySQL: 7.1 e 7.2 concluídos e testados. Cadastro/login, APIs e persistência das telas pendentes.
+- [x] 7. Núcleo integrado com Express/MySQL: blocos 7.1–7.5 concluídos, incluindo interface e isolamento entre contas. Preparação final da entrega ainda pendente.
 - [x] 8. Agenda: visão diária com navegação por data e verificação no Chrome; Semana/Mês futuros.
 - [x] 9. Projetos: lista, filtros, progresso e checklist de etapas em memória, verificados no Chrome. Cadastro e persistência pendentes.
 - [x] 10. Menu Mais e Perfil: navegação complementar e perfil fictício, verificados no Chrome. Sessão e edição reais pendentes.
@@ -711,3 +889,61 @@ Checklist de entrega:
 - [ ] Cópia do código e exportação do banco de demonstração, com restauração verificada em ambiente de teste.
 
 O vídeo apoia a apresentação; o principal resultado continua sendo o sistema funcionando ao vivo. A aprovação escolar depende dos critérios do professor, especialmente das exigências de infraestrutura e participação individual.
+
+## 11. Rodada de testes do sistema — 05/11/2026
+
+Solicitação: executar uma sequência abrangente de testes do estado atual do MVP. Testes realizados localmente com Node.js 24.18.0, MySQL e Chrome headless. Contas fictícias com e-mails aleatórios foram criadas para as integrações e removidas ao final, junto com suas tarefas e disciplinas. Nenhuma correção no código da aplicação foi necessária nesta rodada.
+
+| Camada / cenário | Resultado e evidência |
+| --- | --- |
+| Suíte versionada (`npm test`) | **50 testes aprovados**, zero falhas, cancelamentos ou testes ignorados. Cobre configuração, servidor, cadastro, login, sessões, disciplinas, tarefas e estado do frontend. |
+| Segurança da API | Testes aprovados para validação no servidor, CSRF, origem, cookie adulterado, token de outra sessão, limite de login, expiração, renovação da sessão, proteção de arquivos internos e mensagens sem detalhes de SQL/credenciais. |
+| Disciplinas com MySQL real | CRUD, edição sem mudança, unicidade por conta, isolamento entre usuários, contagem de tarefas e bloqueio de exclusão de disciplina vinculada aprovados. |
+| Tarefas com MySQL real | CRUD, disciplina pertencente ao dono, rejeição de acesso entre contas, rollback, ordenação, edições concorrentes, conclusão repetida sem alterar a data original, reabertura, desvinculação e persistência após novo login aprovados. |
+| Fluxo integrado no navegador | **25 verificações aprovadas**: conta vazia, disciplina real, validação, criação, conteúdo tratado como texto, recarga, edição preservando segundos, rascunho após falha, conclusão/reabertura, agenda, atrasos, filtros, contadores, exclusão cancelada/confirmada, falha e nova tentativa, resposta 401 e troca entre duas contas. |
+| Cadastro no navegador | **8 verificações aprovadas**: formulário habilitado, confirmação divergente, nome inválido, estado de envio, sucesso, duplicidade, falha de rede e largura. Conta persistida após recarregar; banco contém hash scrypt, sem senha em texto puro. |
+| Telas e larguras | **36 combinações aprovadas**: nove painéis em 320, 360, 768 e 1280 pixels, sem rolagem horizontal da página e com apenas um painel ativo. Captura de Tarefas em 320 pixels inspecionada visualmente. |
+| Teclado e navegação | Abertura do menu, foco inicial, ciclo Tab/Shift+Tab, Escape, retorno do foco, rota inválida, logout e bloqueio de acesso após logout aprovados. |
+| Projetos demonstrativos | **6 verificações aprovadas**: progresso inicial, conclusão das etapas, filtro de concluídos, reabertura, recuperação de foco e retorno à lista completa. Não representa persistência no MySQL. |
+| Notificações e preferências demonstrativas | **10 verificações aprovadas**: leitura individual/todas, filtro, indicador, push indisponível, salvar preferências na memória, manutenção durante navegação, descarte de rascunho e acesso pelo menu. Não representa envio real de notificações. |
+| Verificações estáticas | 55 arquivos JavaScript com sintaxe válida; quatro HTML sem IDs duplicados ou referências inválidas de ARIA/labels; `git diff --check` sem erros; `.env` ignorado pelo Git. |
+
+**Resultado:** nenhum defeito da aplicação foi reproduzido nos cenários executados. Os testes de integração e navegador usaram scripts temporários em `/tmp/studyup-*.mjs`; eles não fazem parte de `npm test` nem foram adicionados ao repositório. O log da suíte desta execução está em `/tmp/studyup-audit-unit.log`. Arquivos em `/tmp` são evidências temporárias, não um pacote permanente de entrega.
+
+Na primeira execução da varredura de teclado, a automação não enviou a tecla Escape de forma completa ao Chrome. O script de teste foi corrigido para enviar o código da tecla e sua liberação; o cenário passou no reteste, sem modificar a aplicação.
+
+### Limites desta rodada e verificações restantes
+
+- Falhas de rede e resposta 401 no fluxo integrado foram simuladas no navegador. Falhas de banco e expiração real de sessão são cobertas por testes com dependências controladas; não desligamos o MySQL nem a rede do computador.
+- Larguras foram emuladas no Chrome desktop. Ainda falta testar toque, teclado virtual, orientação e uso em celular físico, além de Firefox/Safari caso façam parte da apresentação.
+- A verificação de teclado e referências ARIA é parcial; não equivale a uma auditoria completa de acessibilidade com leitor de tela.
+- Não foram executados testes de carga, implantação externa, instalação limpa ou exportação/restauração do banco. Esses itens continuam pendentes no checklist de entrega.
+- Projetos, notificações e preferências continuam demonstrativos. Push, recuperação de senha e demais controles marcados como futuros não são funcionalidades entregues.
+
+Para repetir a suíte versionada: executar `npm test` na raiz do projeto. Para a validação manual da equipe: cadastrar duas contas fictícias, criar disciplina/tarefa em uma delas, editar, concluir/reabrir, filtrar, recarregar, sair e confirmar que a segunda conta não vê os registros da primeira. Registrar também o aparelho e navegador utilizados. Não marcar o checklist geral de entrega como concluído antes das verificações restantes.
+
+## 12. Credenciais e revisão de segurança — 05/11/2026
+
+- [x] Mover `.env` para `env/.env`, preservando as credenciais e restringindo pasta/arquivo a 0700/0600. Ignorar toda a pasta `env/` no Git.
+- [x] Atualizar start/dev/db:check, instalador, exemplo e documentação. Instalador protege também configuração antiga na raiz contra criação duplicada.
+- [x] Procurar outros arquivos de credenciais e cópias da senha ativa no projeto/histórico Git, sem imprimir valores. Nenhuma outra credencial real foi identificada. Senhas de usuários permanecem como hashes no banco.
+- [x] Revisar SQL parametrizado, autorização por sessão, CSRF, renderização de texto, permissões do banco e exposição de arquivos.
+- [x] Corrigir ausência de limite temporal no cadastro: cinco tentativas/IP/15 minutos, além das duas operações simultâneas já existentes. Inclui tentativas inválidas e bem-sucedidas; 429 com Retry-After antes do processamento caro.
+- [x] Testar sexta tentativa, IP forjado, JSON inválido e expiração do contador. Suíte atual: **54 testes aprovados**.
+- [x] Consultar dependências: `npm audit --omit=dev` retornou zero vulnerabilidades conhecidas.
+- [x] Testar entradas de SQL no MySQL real com dados fictícios: login não burlado, ID manipulado rejeitado, payload armazenado como texto, isolamento e persistência preservados. Confirmar privilégios mínimos do usuário do banco.
+- [x] Confirmar `npm run db:check` e repetir 25 verificações integradas no Chrome após as mudanças. Contas de teste removidas.
+- [x] Confirmar portas 3000, 3306 e 33060 restritas a 127.0.0.1 no ambiente verificado.
+
+Resultado detalhado e riscos restantes em [seguranca.md](seguranca.md). Nenhuma exploração grave foi reproduzida nos cenários examinados; isso não certifica o sistema para internet. Ainda faltam, para publicação, HTTPS, armazenamento de sessões adequado, limites compartilhados, quotas/paginação e endurecimento por cabeçalhos. O bloqueio atual não é proteção completa contra DDoS e é compartilhado entre pessoas com o mesmo IP.
+
+Se houver um servidor antigo aberto com `npm start`, reiniciá-lo para carregar o novo caminho e o bloqueio de cadastro. Comandos manuais que usavam `--env-file=.env` agora devem usar `--env-file=env/.env`. Não executar `db:setup` novamente no banco já configurado.
+
+## 13. Organização do histórico e plano gratuito — 05/11/2026
+
+- Organizada sequência de oito commits locais por função, quatro mensagens com `[Ícaro]` e quatro com `[Laura]`, preservando autor/e-mail configurados. Relação em [organizacao-commits.md](organizacao-commits.md).
+- Plano de hospedagem criado em [plano-hospedagem.md](plano-hospedagem.md): Vercel Hobby (frontend), Render Free (backend) e Aiven MySQL Free (banco), com condições consultadas nas fontes oficiais.
+- Plano inclui preparação de contas, TLS, sessões persistentes, proxy/cookies, limites, demora na retomada do serviço gratuito, banco, backup/restauração, publicação e testes finais. Esses ajustes de hospedagem ainda não foram implementados.
+- Próximo passo: H1 (contas e planos gratuitos) e H2 (adaptações do código antes da publicação). Nenhum serviço externo criado; nenhum push realizado.
+
+- Verificação após retomada: conexão HTTPS com Render respondeu HTTP 200; suíte final com 54 testes aprovados e verificação de diferenças sem erros.

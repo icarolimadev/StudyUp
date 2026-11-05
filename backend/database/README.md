@@ -18,7 +18,7 @@ O pacote disponível neste ambiente é MySQL 8.4. Instalar depende de autentica�
 
 ### Configuração assistida (alternativa aos passos manuais 2–4)
 
-Para uma configuração inicial sem `.env` e sem usuário `studyup_app` existente, execute na raiz, como seu usuário normal:
+Para uma configuração inicial sem `env/.env` e sem usuário `studyup_app` existente, execute na raiz, como seu usuário normal:
 
 ```sh
 sudo -v
@@ -26,9 +26,9 @@ npm run db:setup
 npm run db:check
 ```
 
-O primeiro comando autentica você no terminal. O script usa o acesso administrativo apenas no cliente MySQL, aplica o esquema, cria o usuário com SELECT/INSERT/UPDATE/DELETE e gera `.env` com senha aleatória e permissão 0600. A senha não aparece no terminal nem nos argumentos dos processos. Não execute npm com sudo.
+O primeiro comando autentica você no terminal. O script usa o acesso administrativo apenas no cliente MySQL, aplica o esquema, cria o usuário com SELECT/INSERT/UPDATE/DELETE e gera `env/.env` com senha aleatória e permissão 0600. A senha não aparece no terminal nem nos argumentos dos processos. Não execute npm com sudo.
 
-O script recusa sobrescrever `.env` ou reutilizar usuário existente. Se falhar depois de iniciar, preserva `.env` para recuperação: a criação do esquema e da conta não é uma transação única, e pode haver configuração parcial. Não apague nem repita automaticamente; revise o estado antes. Os passos manuais abaixo são uma alternativa, não devem ser executados novamente após sucesso do script.
+O script recusa sobrescrever `env/.env` ou reutilizar usuário existente. Se falhar depois de iniciar, preserva `env/.env` para recuperação: a criação do esquema e da conta não é uma transação única, e pode haver configuração parcial. Não apague nem repita automaticamente; revise o estado antes. Os passos manuais abaixo são uma alternativa, não devem ser executados novamente após sucesso do script.
 
 Na raiz do projeto:
 
@@ -66,7 +66,7 @@ Se esse usuário já existir, não o exclua para repetir o procedimento. Confira
 
 ## 4. Configurar o Node.js
 
-Se `.env` ainda não existir, copie `.env.example` para `.env`. Se já existir, edite-o preservando sua configuração. Descomente as linhas DB_* e preencha a mesma senha usada no MySQL. Para valores com `#` ou espaços, coloque o valor entre aspas. O arquivo `.env` já é ignorado pelo Git; nunca coloque essas informações no frontend.
+Crie a pasta privada com `mkdir -p env && chmod 700 env`. Se `env/.env` ainda não existir, copie `.env.example` para `env/.env`. Se já existir, edite-o preservando sua configuração. Descomente as linhas DB_* e preencha a mesma senha usada no MySQL. Para valores com `#` ou espaços, coloque o valor entre aspas. Restrinja o arquivo com `chmod 600 env/.env`. A pasta `env/` já é ignorada pelo Git; nunca coloque essas informações no frontend.
 
 ```text
 DB_HOST=127.0.0.1
