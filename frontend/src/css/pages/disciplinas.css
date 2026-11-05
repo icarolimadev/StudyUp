@@ -1,0 +1,26 @@
+.Subjects-list { display: grid; gap: 1rem; list-style: none; padding: 0; margin: 1.5rem 0 0; }
+.Subjects-card { padding: 1rem; border: 1px solid var(--color-border); border-radius: 1.25rem; min-width: 0; }
+.Subjects-card-header { display: flex; gap: .85rem; align-items: center; }
+.Subjects-icon { display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 1rem; flex: none; }
+.Subjects-icon--green { background: #ebfaf3; color: var(--color-primary-hover); }
+.Subjects-icon--blue { background: #edf3ff; color: #315fb4; }
+.Subjects-icon--pink { background: #fff0f4; color: #b32650; }
+.Subjects-icon--gold { background: #fff8dc; color: #805a00; }
+.Subjects-card-text { min-width: 0; }
+.Subjects-card h2 { font-size: 1rem; line-height: 1.4; overflow-wrap: anywhere; }
+.Subjects-card p { margin-top: .2rem; font-size: .75rem; color: var(--app-muted); }
+.Subjects-next { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem 1rem; flex-wrap: wrap; border-top: 1px solid var(--color-border); padding-top: .65rem; margin-top: .85rem; font-size: .7rem; }
+.Subjects-next span { color: var(--app-muted); }
+.Subjects-next strong { font-weight: 600; overflow-wrap: anywhere; }
+.Subjects-new { display: flex; align-items: center; justify-content: center; gap: .6rem; width: 100%; min-height: 3.25rem; padding: .75rem; margin-top: 1rem; border: 1px solid var(--color-border); border-radius: 1rem; color: var(--color-text); background: white; font-weight: 600; cursor: pointer; }
+.Subjects-new span { font-size: 1.3rem; }
+.Subjects-form-panel { border: 1px solid var(--color-border); border-radius: 1rem; padding: 1rem; margin-top: 1.25rem; }
+.Subjects-form-panel h2 { font-size: 1.1rem; margin-bottom: 1rem; }
+.Subjects-actions { display: flex; gap: .75rem; flex-wrap: wrap; }
+.Subjects-actions button { flex: 1; }
+.Subjects-cancel { min-height: 3.25rem; padding: .75rem; border: 1px solid var(--color-border); border-radius: 1rem; background: white; color: var(--color-text); cursor: pointer; }
+.Subjects-feedback { margin-top: 1rem; color: var(--color-primary-hover); font-size: .875rem; overflow-wrap: anywhere; }
+.Subjects :is(button, input, select):focus-visible { outline: 3px solid var(--color-primary); outline-offset: 3px; }
+@media (min-width: 768px) {
+  .Subjects-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
