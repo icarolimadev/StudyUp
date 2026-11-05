@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Organize seus estudos com o StudyUp.">
+  <title>Início | StudyUp</title>
+  <link rel="stylesheet" href="../../src/css/main.css">
+  <script type="module" src="../../src/js/layouts/app-layout.js"></script>
+</head>
+<body class="App-page">
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+  <!-- Símbolos locais compartilhados: não dependem de biblioteca de ícones. -->
+  <svg class="App-symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="icon-home" viewBox="0 0 24 24">
+      <path d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-8h6v8" />
+    </symbol>
+    <symbol id="icon-calendar" viewBox="0 0 24 24">
+      <rect x="4" y="5" width="16" height="16" rx="2" />
+      <path d="M8 3v4m8-4v4M4 11h16" />
+    </symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24">
+      <path d="M12 4v16M4 12h16" />
+    </symbol>
+    <symbol id="icon-folder" viewBox="0 0 24 24">
+      <path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" />
+    </symbol>
+    <symbol id="icon-menu" viewBox="0 0 24 24">
+      <path d="M5 6h14M5 12h14M5 18h14" />
+    </symbol>
+    <symbol id="icon-book" viewBox="0 0 24 24">
+      <path d="M5 3h11v18H6a3 3 0 0 1 0-6h10M5 3v12M19 5v6m-3-3h6" />
+    </symbol>
+    <symbol id="icon-user" viewBox="0 0 24 24">
+      <circle cx="12" cy="7" r="4" /><path d="M4 21v-2a8 8 0 0 1 16 0v2" />
+    </symbol>
+    <symbol id="icon-bell" viewBox="0 0 24 24">
+      <path d="M4 18h16l-2-3V9a6 6 0 0 0-12 0v6l-2 3Zm6 3h4" />
+    </symbol>
+    <symbol id="icon-settings" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="4" /><path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2" />
+    </symbol>
+    <symbol id="icon-lock" viewBox="0 0 24 24">
+      <rect x="5" y="10" width="14" height="11" rx="3" /><path d="M8 10V6a4 4 0 0 1 8 0v4" />
+    </symbol>
+  </svg>
+
+  <div class="App-shell">
+    <header class="App-header">
+      <a class="App-brand" href="#inicio" aria-label="StudyUp — início">
+        <span class="App-brand-mark"><svg class="App-icon" aria-hidden="true"><use href="#icon-book" /></svg></span>
+        <span>Study<span class="App-brand-accent">Up</span></span>
+      </a>
+      <div class="Profile-header-actions">
+        <span class="App-preview-label">Prévia</span>
+        <a class="Profile-header-link" href="#perfil" aria-label="Abrir perfil de demonstração">
+          <svg class="App-icon" aria-hidden="true"><use href="#icon-user" /></svg>
+        </a>
+      </div>
+    </header>
+
+    <!-- Início e Tarefas compartilham exemplos em memória. -->
+    <main class="App-content" id="conteudo" tabindex="-1">
+      <section class="App-panel Home" id="inicio" data-page-title="Início" aria-labelledby="inicio-title">
+        <p class="Home-date" id="home-date"></p>
+        <h1 id="inicio-title" tabindex="-1">Olá, estudante!</h1>
+        <p class="App-intro">Vamos organizar seu dia?</p>
+        <p class="Home-demo">Dados de demonstração. Alterações duram até recarregar a página.</p>
+        <div class="Home-week" id="home-week" role="group" aria-label="Selecionar dia da semana"></div>
+        <div class="Home-stats" id="home-stats" role="group" aria-label="Atividades do dia selecionado"></div>
+        <div class="Home-columns">
+          <section class="Home-section" aria-labelledby="home-tasks-title">
+            <div class="Tasks-section-heading">
+              <h2 id="home-tasks-title">Tarefas de hoje</h2>
+              <a class="Tasks-text-link" href="#tarefas">Ver todas</a>
+            </div>
+            <ul class="Home-tasks" id="home-tasks"></ul>
+            <p class="Home-empty" id="home-empty" hidden>Nenhuma tarefa para este dia. Aproveite para planejar seus estudos.</p>
+          </section>
+          <section class="Home-section" aria-labelledby="home-deadlines-title">
+            <h2 id="home-deadlines-title">Próximos prazos</h2>
+            <p class="Home-caption">Pendências a partir de hoje</p>
+            <ul class="Home-deadlines" id="home-deadlines"></ul>
+          </section>
+        </div>
+        <p class="sr-only" id="home-feedback" role="status" aria-live="polite"></p>
+      </section>
+      <section class="App-panel Tasks" id="tarefas" aria-labelledby="tarefas-title" hidden>
+        <h1 id="tarefas-title" tabindex="-1">Tarefas</h1>
+        <p class="Home-demo">Dados de demonstração. Alterações duram até recarregar a página.</p>
+        <div class="Tasks-periods" id="tasks-periods" role="group" aria-label="Filtrar tarefas por período ou conclusão">
+          <button type="button" data-period="todas" aria-pressed="true">Todas</button>
+          <button type="button" data-period="hoje" aria-pressed="false">Hoje</button>
+          <button type="button" data-period="proximas" aria-pressed="false">Próximas</button>
+          <button type="button" data-period="concluidas" aria-pressed="false">Concluídas</button>
+        </div>
+        <p class="Tasks-help" id="tasks-period-help">Todas as tarefas, incluindo concluídas.</p>
+        <div class="Tasks-filters">
+          <label class="Tasks-search" for="tasks-search">Buscar tarefa
+            <input id="tasks-search" type="search" placeholder="Título ou disciplina" autocomplete="off">
+          </label>
+          <label for="tasks-subject">Disciplina
+            <select id="tasks-subject"><option value="">Todas as disciplinas</option></select>
+          </label>
+          <label for="tasks-priority">Prioridade
+            <select id="tasks-priority">
+              <option value="">Todas as prioridades</option>
+              <option>Baixa</option><option>Média</option><option>Alta</option>
+            </select>
+          </label>
+        </div>
+        <div class="Tasks-section-heading">
+          <p class="Tasks-help" id="tasks-count" role="status" aria-live="polite"></p>
+          <button class="Tasks-clear" id="tasks-clear" type="button">Limpar filtros</button>
+        </div>
+        <ul class="Tasks-list" id="tasks-list"></ul>
+        <p class="Home-empty" id="tasks-empty" hidden>Nenhuma tarefa encontrada. Experimente outro período ou limpe os filtros.</p>
+        <p class="sr-only" id="tasks-feedback" role="status" aria-live="polite"></p>
+      </section>
+      <section class="App-panel Agenda" id="agenda" aria-labelledby="agenda-title" hidden>
+        <h1 id="agenda-title" tabindex="-1">Agenda</h1>
+        <p class="Home-demo">Dados de demonstração. Horários de Fortaleza.</p>
+        <div class="Agenda-modes" aria-label="Visualização da agenda">
+          <span class="Agenda-mode-active">Dia <span class="sr-only">selecionado</span></span>
+          <span>Semana <small>Em breve</small></span>
+          <span>Mês <small>Em breve</small></span>
+        </div>
+        <div class="Agenda-date-nav">
+          <button id="agenda-prev" type="button" aria-label="Dia anterior">‹</button>
+          <div class="Agenda-date-copy">
+            <h2 id="agenda-date-title"></h2>
+            <p id="agenda-weekday"></p>
+          </div>
+          <button id="agenda-next" type="button" aria-label="Próximo dia">›</button>
+        </div>
+        <div class="Agenda-controls">
+          <label for="agenda-date">Escolher data
+            <input id="agenda-date" type="date" min="1000-01-01" max="9999-12-31" required>
+          </label>
+          <button id="agenda-today" type="button">Hoje</button>
+        </div>
+        <p class="Agenda-caption">Horários de prazo ou início; os cartões não representam duração.</p>
+        <p class="sr-only" id="agenda-feedback" role="status" aria-live="polite"></p>
+        <p class="Home-empty" id="agenda-empty" hidden>Nenhuma atividade para este dia.</p>
+        <ol class="Agenda-timeline" id="agenda-timeline" aria-label="Atividades por horário"></ol>
+      </section>
+      <section class="App-panel Add" id="adicionar" aria-labelledby="adicionar-title" hidden>
+        <h1 id="adicionar-title" tabindex="-1">Adicionar atividade</h1>
+        <p class="Home-demo">Demonstração: os dados serão apagados ao recarregar.</p>
+        <div class="Add-types" aria-label="Tipos de atividade">
+          <span class="Add-type Add-type--selected"><span aria-hidden="true">✓</span>Tarefa <span class="sr-only">selecionada</span></span>
+          <span class="Add-type"><svg class="App-icon" aria-hidden="true"><use href="#icon-folder" /></svg>Projeto<small>Em breve</small></span>
+          <span class="Add-type"><svg class="App-icon" aria-hidden="true"><use href="#icon-book" /></svg>Prova<small>Em breve</small></span>
+          <span class="Add-type"><svg class="App-icon" aria-hidden="true"><use href="#icon-calendar" /></svg>Evento<small>Em breve</small></span>
+        </div>
+        <form class="Add-form" id="add-task-form">
+          <p class="Add-help">Campos com * são obrigatórios. Horários de Fortaleza.</p>
+          <label for="add-title">Título *
+            <input id="add-title" name="title" type="text" maxlength="150" placeholder="Ex.: Revisar anotações" required>
+          </label>
+          <label for="add-description">Descrição
+            <textarea id="add-description" name="description" rows="4" maxlength="5000" placeholder="Adicione mais detalhes..."></textarea>
+          </label>
+          <label for="add-subject">Disciplina
+            <select id="add-subject" name="subject"><option value="">Sem disciplina</option></select>
+          </label>
+          <div class="Add-row">
+            <label for="add-date">Data *<input id="add-date" name="date" type="date" min="1000-01-01" max="9999-12-31" required></label>
+            <label for="add-time">Horário *<input id="add-time" name="time" type="time" value="23:59" required></label>
+          </div>
+          <fieldset class="Add-priorities">
+            <legend>Prioridade</legend>
+            <div class="Add-priority-options">
+              <label><input type="radio" name="priority" value="Baixa"><span>Baixa</span></label>
+              <label><input type="radio" name="priority" value="Média" checked><span>Média</span></label>
+              <label><input type="radio" name="priority" value="Alta"><span>Alta</span></label>
+            </div>
+          </fieldset>
+          <div class="Add-reminder">
+            <label class="Add-switch-label" for="add-reminder">Adicionar lembrete
+              <input id="add-reminder" name="reminderEnabled" type="checkbox" role="switch" aria-describedby="add-reminder-help" aria-controls="add-reminder-options">
+            </label>
+            <p class="Add-help" id="add-reminder-help">A preferência será guardada nesta demonstração. Ainda não enviamos notificações.</p>
+          </div>
+          <label id="add-reminder-options" for="add-reminder-minutes" hidden>Lembrar
+            <select id="add-reminder-minutes" name="reminderMinutes" disabled>
+              <option value="30">30 minutos antes</option>
+              <option value="60">1 hora antes</option>
+              <option value="1440">1 dia antes</option>
+              <option value="2880">2 dias antes</option>
+            </select>
+          </label>
+          <p class="Add-error" id="add-error" role="alert" hidden></p>
+          <button class="Add-submit" type="submit">Salvar tarefa</button>
+        </form>
+        <div class="Add-result" id="add-result" hidden>
+          <p id="add-success" role="status" aria-live="polite" tabindex="-1"></p>
+          <a class="Tasks-text-link" id="add-view-tasks" href="#tarefas">Ver tarefas</a>
+        </div>
+      </section>
+      <section class="App-panel Subjects" id="disciplinas" aria-labelledby="disciplinas-title" hidden>
+        <h1 id="disciplinas-title" tabindex="-1">Disciplinas</h1>
+        <p class="Home-demo">Demonstração: os dados serão apagados ao recarregar.</p>
+        <ul class="Subjects-list" id="subjects-list"></ul>
+        <p class="Home-empty" id="subjects-empty" hidden>Cadastre sua primeira disciplina para organizar as atividades.</p>
+        <button class="Subjects-new" id="subjects-new" type="button" aria-expanded="false" aria-controls="subject-form-panel">
+          <span aria-hidden="true">＋</span> Nova disciplina
+        </button>
+        <section class="Subjects-form-panel" id="subject-form-panel" aria-labelledby="subject-form-title" hidden>
+          <h2 id="subject-form-title">Nova disciplina</h2>
+          <form class="Add-form" id="subject-form">
+            <label for="subject-name">Nome da disciplina *
+              <input id="subject-name" name="name" type="text" maxlength="100" placeholder="Ex.: Química" required>
+            </label>
+            <label for="subject-color">Cor de identificação
+              <select id="subject-color" name="color">
+                <option value="green">Verde</option>
+                <option value="blue">Azul</option>
+                <option value="pink">Rosa</option>
+                <option value="gold">Amarelo</option>
+              </select>
+            </label>
+            <p class="Add-error" id="subject-error" role="alert" hidden></p>
+            <div class="Subjects-actions">
+              <button class="Subjects-cancel" id="subject-cancel" type="button">Cancelar</button>
+              <button class="Add-submit" type="submit">Salvar disciplina</button>
+            </div>
+          </form>
+        </section>
+        <p class="Subjects-feedback" id="subject-feedback" role="status" aria-live="polite"></p>
+      </section>
+      <section class="App-panel Projects" id="projetos" aria-labelledby="projetos-title" hidden>
+        <h1 id="projetos-title" tabindex="-1">Projetos</h1>
+        <p class="Home-demo">Dados de demonstração. Alterações duram até recarregar.</p>
+        <div class="Projects-filters" id="projects-filters" role="group" aria-label="Filtrar projetos">
+          <button type="button" data-filter="todos" aria-pressed="true">Todos</button>
+          <button type="button" data-filter="andamento" aria-pressed="false">Em andamento</button>
+          <button type="button" data-filter="concluidos" aria-pressed="false">Concluídos</button>
+        </div>
+        <ul class="Projects-list" id="projects-list"></ul>
+        <p class="Home-empty" id="projects-empty" hidden>Nenhum projeto neste filtro.</p>
+        <p class="Projects-help">Abra “Ver etapas” para acompanhar o progresso. O cadastro de novos projetos estará disponível em uma próxima etapa.</p>
+        <p class="sr-only" id="projects-feedback" role="status" aria-live="polite"></p>
+      </section>
+      <section class="App-panel Notifications" id="notificacoes" aria-labelledby="notificacoes-title" hidden>
+        <div class="Notifications-heading">
+          <h1 id="notificacoes-title" tabindex="-1">Notificações</h1>
+          <button class="Notifications-read-all" id="notifications-read-all" type="button" aria-describedby="notifications-read-help">Ler todas</button>
+        </div>
+        <p class="Home-demo">Exemplos de notificações. Não são avisos enviados pelo sistema; a leitura é reiniciada ao recarregar.</p>
+        <a class="Tasks-text-link" href="#preferencias-notificacoes">Preferências de notificações</a>
+        <div class="Notifications-filters" id="notifications-filters" role="group" aria-label="Filtrar notificações">
+          <button type="button" data-type="todas" aria-pressed="true">Todas</button>
+          <button type="button" data-type="tarefa" aria-pressed="false">Tarefas</button>
+          <button type="button" data-type="projeto" aria-pressed="false">Projetos</button>
+          <button type="button" data-type="prova" aria-pressed="false">Provas</button>
+          <button type="button" data-type="evento" aria-pressed="false">Eventos</button>
+        </div>
+        <p class="Notifications-help" id="notifications-read-help">“Ler todas” inclui notificações fora do filtro atual.</p>
+        <p class="Notifications-help" id="notifications-count"></p>
+        <div id="notifications-groups"></div>
+        <p class="Home-empty" id="notifications-empty" hidden>Nenhuma notificação neste filtro.</p>
+        <p class="sr-only" id="notifications-feedback" role="status" aria-live="polite"></p>
+      </section>
+      <section class="App-panel Preferences" id="preferencias-notificacoes" aria-labelledby="preferences-title" hidden>
+        <a class="Tasks-text-link" href="#notificacoes">← Notificações</a>
+        <h1 id="preferences-title" tabindex="-1">Preferências de notificações</h1>
+        <p class="Home-demo">Preferências temporárias. Ainda não enviamos avisos; recarregar restaura os exemplos. Salve antes de sair desta tela.</p>
+        <form class="Add-form Preferences-form" id="notification-preferences-form">
+          <div class="Preferences-row">
+            <label class="Add-switch-label" for="pref-push">Notificações push<input id="pref-push" type="checkbox" role="switch" disabled aria-describedby="pref-push-help"></label>
+            <p class="Add-help" id="pref-push-help">Indisponíveis nesta prévia. Nenhuma permissão do navegador será solicitada.</p>
+          </div>
+          <div class="Preferences-row">
+            <label class="Add-switch-label" for="pref-tasks">Lembretes de tarefas<input id="pref-tasks" name="tasks" type="checkbox" role="switch" aria-describedby="pref-tasks-help"></label>
+            <p class="Add-help" id="pref-tasks-help">Preferência para avisos antes das tarefas.</p>
+          </div>
+          <div class="Preferences-row">
+            <label class="Add-switch-label" for="pref-exams">Lembretes de provas<input id="pref-exams" name="exams" type="checkbox" role="switch"></label>
+            <p class="Add-help">Preferência para preparação antes das provas.</p>
+          </div>
+          <div class="Preferences-row">
+            <label class="Add-switch-label" for="pref-projects">Lembretes de projetos<input id="pref-projects" name="projects" type="checkbox" role="switch"></label>
+            <p class="Add-help">Preferência para etapas e entregas.</p>
+          </div>
+          <div class="Preferences-row">
+            <label class="Add-switch-label" for="pref-events">Eventos<input id="pref-events" name="events" type="checkbox" role="switch"></label>
+            <p class="Add-help">Preferência para compromissos da agenda.</p>
+          </div>
+          <div class="Preferences-row">
+            <label class="Add-switch-label" for="pref-deadlines">Prazos próximos<input id="pref-deadlines" name="deadlines" type="checkbox" role="switch"></label>
+            <p class="Add-help">Preferência para datas de entrega.</p>
+          </div>
+          <label for="pref-advance">Lembrar prazos com antecedência
+            <select id="pref-advance" name="advanceDays">
+              <option value="1">1 dia</option><option value="2">2 dias</option><option value="3">3 dias</option><option value="7">7 dias</option>
+            </select>
+          </label>
+          <p class="Add-help">Salvar não altera a lista de exemplos nem os lembretes individuais das tarefas.</p>
+          <p class="Add-error" id="preferences-error" role="alert" hidden></p>
+          <button class="Add-submit" type="submit">Salvar preferências</button>
+          <p class="Preferences-feedback" id="preferences-feedback" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+      <section class="App-panel Profile" id="perfil" aria-labelledby="perfil-title" hidden>
+        <h1 class="sr-only" id="perfil-title" tabindex="-1">Perfil</h1>
+        <div class="Profile-identity">
+          <span class="Profile-avatar" aria-hidden="true"><svg class="App-icon"><use href="#icon-user" /></svg></span>
+          <h2 data-profile-name>Estudante exemplo</h2>
+          <p data-profile-email>estudante@example.com</p>
+          <span class="Profile-role">Estudante</span>
+        </div>
+        <p class="Profile-demo">Perfil fictício da demonstração. Não há uma conta autenticada nesta prévia.</p>
+        <div class="Profile-options">
+          <details class="Profile-personal">
+            <summary><span class="Profile-option-icon"><svg class="App-icon" aria-hidden="true"><use href="#icon-user" /></svg></span>Informações pessoais</summary>
+            <dl class="Profile-info">
+              <dt>Nome</dt><dd data-profile-name>Estudante exemplo</dd>
+              <dt>E-mail</dt><dd data-profile-email>estudante@example.com</dd>
+            </dl>
+            <p class="Profile-note">Edição disponível após a implementação das contas.</p>
+          </details>
+          <a class="Profile-option" href="#preferencias-notificacoes"><span class="Profile-option-icon"><svg class="App-icon" aria-hidden="true"><use href="#icon-settings" /></svg></span><span>Preferências de notificações</span><small aria-hidden="true">›</small></a>
+          <a class="Profile-option" href="#notificacoes"><span class="Profile-option-icon"><svg class="App-icon" aria-hidden="true"><use href="#icon-bell" /></svg></span><span>Notificações</span><small data-notification-count></small></a>
+          <button class="Profile-option" type="button" disabled><span class="Profile-option-icon" aria-hidden="true">☼</span><span>Tema</span><small>Em breve</small></button>
+          <button class="Profile-option" type="button" disabled><span class="Profile-option-icon"><svg class="App-icon" aria-hidden="true"><use href="#icon-lock" /></svg></span><span>Segurança</span><small>Em breve</small></button>
+        </div>
+        <button class="Profile-logout" type="button" disabled aria-describedby="profile-session-help">Sair da conta</button>
+        <p class="Profile-note" id="profile-session-help">Disponível quando o login real estiver implementado.</p>
+      </section>
+      <noscript><p class="App-noscript">Ative o JavaScript para navegar nesta prévia.</p></noscript>
+    </main>
+
+    <nav class="App-nav" aria-label="Navegação principal">
+      <a class="App-nav-link" href="#inicio" aria-current="page">
+        <span class="App-nav-icon"><svg class="App-icon" aria-hidden="true"><use href="#icon-home" /></svg></span>
+        <span>Início</span>
+      </a>
+      <a class="App-nav-link" href="#agenda">
+        <span class="App-nav-icon"><svg class="App-icon" aria-hidden="true"><use href="#icon-calendar" /></svg></span>
+        <span>Agenda</span>
+      </a>
+      <a class="App-nav-link App-nav-link--add" href="#adicionar">
+        <span class="App-nav-icon"><svg class="App-icon" aria-hidden="true"><use href="#icon-plus" /></svg></span>
+        <span>Adicionar</span>
+      </a>
+      <a class="App-nav-link" href="#projetos">
+        <span class="App-nav-icon"><svg class="App-icon" aria-hidden="true"><use href="#icon-folder" /></svg></span>
+        <span>Projetos</span>
+      </a>
+      <button class="App-nav-link More-trigger" id="more-trigger" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="more-menu">
+        <span class="App-nav-icon"><svg class="App-icon" aria-hidden="true"><use href="#icon-menu" /></svg></span>
+        <span>Mais</span>
+      </button>
+    </nav>
+  </div>
+
+  <dialog class="More-dialog" id="more-menu" aria-labelledby="more-title">
+    <div class="More-handle" aria-hidden="true"></div>
+    <div class="More-heading">
+      <h2 id="more-title">Mais</h2>
+      <button class="More-close" id="more-close" type="button" aria-label="Fechar menu" autofocus>×</button>
+    </div>
+    <a class="More-profile" href="#perfil">
+      <span class="More-avatar"><svg class="App-icon" aria-hidden="true"><use href="#icon-user" /></svg></span>
+      <span class="More-profile-copy"><strong data-profile-name>Estudante exemplo</strong><small>Perfil de demonstração</small></span>
+      <span aria-hidden="true">›</span>
+    </a>
+    <nav class="More-links" aria-label="Navegação complementar">
+      <a href="#inicio"><svg class="App-icon" aria-hidden="true"><use href="#icon-home" /></svg><span>Início</span><span aria-hidden="true">›</span></a>
+      <a href="#agenda"><svg class="App-icon" aria-hidden="true"><use href="#icon-calendar" /></svg><span>Agenda</span><span aria-hidden="true">›</span></a>
+      <a href="#tarefas"><span class="More-text-icon" aria-hidden="true">✓</span><span>Tarefas</span><span aria-hidden="true">›</span></a>
+      <a href="#projetos"><svg class="App-icon" aria-hidden="true"><use href="#icon-folder" /></svg><span>Projetos</span><span aria-hidden="true">›</span></a>
+      <a href="#disciplinas"><svg class="App-icon" aria-hidden="true"><use href="#icon-book" /></svg><span>Disciplinas</span><span aria-hidden="true">›</span></a>
+      <button type="button" disabled><svg class="App-icon" aria-hidden="true"><use href="#icon-calendar" /></svg><span>Calendário mensal</span><small>Em breve</small></button>
+      <a href="#notificacoes"><svg class="App-icon" aria-hidden="true"><use href="#icon-bell" /></svg><span>Notificações</span><small data-notification-count></small></a>
+      <a href="#perfil"><svg class="App-icon" aria-hidden="true"><use href="#icon-settings" /></svg><span>Perfil e configurações</span><span aria-hidden="true">›</span></a>
+    </nav>
+    <p class="More-note">Prévia sem sessão autenticada. Login e saída da conta serão integrados na etapa de autenticação.</p>
+  </dialog>
+</body>
+</html>

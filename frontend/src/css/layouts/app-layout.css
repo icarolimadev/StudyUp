@@ -1,0 +1,104 @@
+/* Estrutura compartilhada das telas internas. Classes App isolam esta prévia. */
+.App-page {
+  /* Branco sobre este verde tem contraste de aproximadamente 5,1:1. */
+  --color-primary: #187d5a;
+  --app-muted: #65677d;
+  --app-soft: #fff8dc;
+  --app-nav-height: 5.75rem;
+  background: #f7f8fa;
+  color: var(--color-text);
+}
+
+.App-symbols { position: absolute; width: 0; height: 0; overflow: hidden; }
+.App-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.App-shell {
+  max-width: var(--content-width);
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin-inline: auto;
+  background: var(--color-surface);
+}
+
+.App-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: max(var(--space-6), env(safe-area-inset-top))
+    max(var(--space-6), env(safe-area-inset-right)) var(--space-6)
+    max(var(--space-6), env(safe-area-inset-left));
+}
+
+.App-brand { display: inline-flex; align-items: center; gap: .65rem; color: var(--color-text); text-decoration: none; font-size: 1.35rem; font-weight: 800; }
+.App-brand-mark { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: .8rem; background: var(--color-primary); color: white; box-shadow: 0 6px 16px rgb(27 137 99 / 16%); }
+.App-brand-accent { color: var(--color-accent); }
+.App-preview-label { padding: .25rem .65rem; border-radius: 2rem; background: var(--app-soft); color: var(--color-primary-hover); font-size: .75rem; font-weight: 600; }
+
+.App-content {
+  padding: var(--space-4) max(var(--space-6), env(safe-area-inset-right))
+    calc(var(--app-nav-height) + env(safe-area-inset-bottom) + var(--space-8))
+    max(var(--space-6), env(safe-area-inset-left));
+}
+
+.App-panel { max-width: 44rem; margin-inline: auto; overflow-wrap: anywhere; }
+/* Mantém controles focados afastados da navegação fixa ao rolar pelo teclado. */
+.App-page :is(input, select, textarea, button, a, summary) {
+  scroll-margin-block: 1rem calc(var(--app-nav-height) + 1rem + env(safe-area-inset-bottom));
+}
+.App-page [hidden] { display: none !important; }
+.App-eyebrow { margin-bottom: var(--space-2); color: var(--color-primary-hover); font-size: .875rem; font-weight: 600; }
+.App-panel h1 { font-size: clamp(1.6rem, 5vw, 2rem); letter-spacing: -.04em; overflow-wrap: anywhere; }
+.App-intro { margin-top: var(--space-2); color: var(--app-muted); }
+.App-placeholder { margin-top: var(--space-8); padding: var(--space-8) var(--space-6); border: 1px solid var(--color-border); border-radius: 1.25rem; }
+.App-placeholder-icon { display: grid; place-items: center; width: 3rem; height: 3rem; margin-bottom: var(--space-6); background: var(--app-soft); color: var(--color-primary); border-radius: 1rem; }
+.App-placeholder h2 { font-size: 1.125rem; }
+.App-placeholder p { margin-top: var(--space-2); color: var(--app-muted); }
+.App-noscript { margin-top: var(--space-6); color: var(--color-text); }
+
+/* O espaço inferior do conteúdo reserva a altura da barra e a área segura. */
+.App-nav {
+  position: fixed;
+  z-index: var(--z-navigation);
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: end;
+  width: 100%;
+  max-width: var(--content-width);
+  min-height: var(--app-nav-height);
+  padding: .5rem max(.5rem, env(safe-area-inset-right))
+    calc(.65rem + env(safe-area-inset-bottom)) max(.5rem, env(safe-area-inset-left));
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: 0 -8px 24px rgb(37 42 59 / 3%);
+}
+
+.App-nav-link { display: flex; flex-direction: column; align-items: center; justify-content: end; gap: .25rem; min-width: 0; min-height: var(--touch-target); padding: .25rem 0; color: var(--app-muted); text-decoration: none; font-size: .7rem; }
+.App-nav-icon { display: grid; place-items: center; width: 2.5rem; height: 2.25rem; border-radius: .85rem; }
+.App-nav-link[aria-current="page"] { color: var(--color-primary-hover); font-weight: 700; }
+.App-nav-link[aria-current="page"] .App-nav-icon { background: var(--app-soft); }
+.App-nav-link--add .App-nav-icon { width: 3rem; height: 3rem; margin-top: -.75rem; background: var(--color-primary); color: white; border-radius: 1rem; box-shadow: 0 6px 16px rgb(27 137 99 / 18%); }
+.App-nav-link--add[aria-current="page"] .App-nav-icon { color: var(--color-primary-hover); }
+.App-page :is(a, [tabindex]):focus-visible { outline: 3px solid var(--color-primary); outline-offset: 3px; border-radius: .25rem; }
+
+@media (min-width: 768px) {
+  .App-header { padding-inline: var(--space-8); }
+  .App-content { padding-top: var(--space-8); }
+  .App-nav { padding-inline: 15%; }
+}
+
+@media (hover: hover) {
+  .App-nav-link:hover { color: var(--color-primary-hover); }
+  .App-nav-link:hover .App-nav-icon { background: var(--app-soft); color: var(--color-primary-hover); }
+}

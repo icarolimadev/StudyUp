@@ -5,8 +5,18 @@
 @import url("./base/global.css");
 @import url("./base/utilities.css");
 @import url("./components/button.css");
+@import url("./components/menu-mais.css");
+@import url("./layouts/app-layout.css");
 
 /* Estilos específicos de cada página, após a base compartilhada. */
 @import url("./pages/study.css");
 @import url("./pages/landing.css");
 @import url("./pages/auth.css");
+@import url("./pages/inicio.css");
+@import url("./pages/tarefas.css");
+@import url("./pages/adicionar.css");
+@import url("./pages/disciplinas.css");
+@import url("./pages/agenda.css");
+@import url("./pages/projetos.css");
+@import url("./pages/perfil.css");
+@import url("./pages/notificacoes.css");
