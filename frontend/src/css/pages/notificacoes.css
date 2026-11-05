@@ -1,0 +1,32 @@
+.Notifications-heading { display: flex; align-items: center; justify-content: space-between; gap: .6rem; flex-wrap: wrap; }
+.Notifications-read-all, .Notifications-read { border: 0; padding: .4rem 0; min-height: 2.75rem; background: transparent; color: var(--color-primary-hover); font-size: .75rem; font-weight: 600; cursor: pointer; }
+.Notifications-read-all[aria-disabled="true"], .Notifications-read[aria-disabled="true"] { color: var(--app-muted); cursor: default; }
+.Notifications-filters { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .5rem; }
+.Notifications-filters button { min-height: 2.75rem; padding: .6rem .8rem; border: 0; border-radius: .85rem; color: var(--app-muted); background: #f7f7fa; font-size: .75rem; font-weight: 600; cursor: pointer; }
+.Notifications-filters button[aria-pressed="true"] { background: var(--color-primary); color: white; }
+.Notifications-help { margin-top: .65rem; font-size: .7rem; color: var(--app-muted); }
+.Notifications-group { margin-top: 1.5rem; }
+.Notifications-group h2 { font-size: .9rem; }
+.Notifications-list { list-style: none; padding: 0; margin: .5rem 0 0; }
+.Notifications-item { display: flex; align-items: start; gap: .8rem; padding: 1rem 0; border-bottom: 1px solid var(--color-border); }
+.Notifications-icon { display: grid; place-items: center; width: 2.6rem; height: 2.6rem; flex: none; border-radius: 1rem; color: var(--color-primary-hover); background: var(--app-soft); }
+.Notifications-item--prova .Notifications-icon { color: #315fb4; background: #edf3ff; }
+.Notifications-item--evento .Notifications-icon { color: #b32650; background: #fff0f4; }
+.Notifications-icon .App-icon { width: 1.3rem; height: 1.3rem; }
+.Notifications-body { min-width: 0; flex: 1; }
+.Notifications-item-heading { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; flex-wrap: wrap; }
+.Notifications-item h3 { font-size: .85rem; line-height: 1.4; margin: 0; overflow-wrap: anywhere; }
+.Notifications-state { color: var(--app-muted); font-size: .65rem; }
+.Notifications-item.is-unread .Notifications-state { color: var(--color-primary-hover); font-weight: 600; }
+.Notifications-item.is-unread .Notifications-state::before { content: ''; display: inline-block; width: .35rem; height: .35rem; margin-right: .3rem; background: currentColor; border-radius: 50%; }
+.Notifications-message { margin-top: .35rem; color: var(--app-muted); font-size: .8rem; overflow-wrap: anywhere; }
+.Notifications-type { display: inline-block; margin-top: .35rem; margin-right: .5rem; font-size: .65rem; color: var(--app-muted); }
+.Notifications-time { display: inline-block; font-size: .65rem; color: var(--app-muted); }
+.Notifications-read { display: block; }
+.Notifications :is(button, a):focus-visible { outline: 3px solid var(--color-primary); outline-offset: 3px; }
+.Profile-option[href] { text-decoration: none; }
+.Preferences-form { margin-top: 1.5rem; gap: 1rem; }
+.Preferences-row { border-bottom: 1px solid var(--color-border); padding-bottom: .85rem; }
+.Preferences-row input:disabled { cursor: default; opacity: .5; }
+.Preferences-feedback { color: var(--color-primary-hover); font-size: .8rem; }
+.Preferences :is(input, select, button):focus-visible { outline: 3px solid var(--color-primary); outline-offset: 3px; }
