@@ -413,6 +413,12 @@
   line-height: 22px;
 }
 
+.Auth-feedback.is-success { color: var(--color-primary-hover); }
+.Auth-feedback { overflow-wrap: anywhere; }
+.Auth-registration-note { margin-top: 1rem; color: #65677d; font-size: .85rem; }
+.Auth-form[aria-busy="true"] .Auth-button { cursor: wait; opacity: .7; }
+.Auth-button:enabled { cursor: pointer; }
+
 .Auth-divider {
   display: flex;
   align-items: center;

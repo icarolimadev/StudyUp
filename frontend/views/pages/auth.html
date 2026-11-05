@@ -6,10 +6,7 @@
   <meta name="description" content="Entre na sua conta StudyUp, crie uma conta ou recupere o acesso para organizar seus estudos.">
   <meta name="theme-color" content="#ffffff">
   <title>Sua conta | StudyUp</title>
-  <!-- Mesma tipografia das páginas Study e UP. -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Usa a fonte do sistema quando Inter não está disponível localmente. -->
   <link rel="stylesheet" href="../../src/css/main.css">
 </head>
 <body class="Auth-page">
@@ -36,11 +33,8 @@
         <p class="Auth-subtitle">Bem-vindo de volta! Que bom ter você aqui.</p>
       </div>
 
-      <!-- Integração futura: definir action, conectar o envio e remover disabled.
-           O submit desativado também impede envio implícito por Enter.
-           method="post" evita credenciais na URL quando a integração for ativada.
-           Os exemplos são placeholders; nenhum dado pessoal vem preenchido. -->
-      <form class="Auth-form" id="Auth-login-form" method="post" aria-labelledby="Auth-login-title">
+      <!-- O módulo de login habilita o botão e envia JSON para a API. -->
+      <form class="Auth-form" id="Auth-login-form" method="post" action="/api/auth/login" aria-labelledby="Auth-login-title">
         <div class="Auth-fields">
           <div class="Auth-field">
             <label class="Auth-label" for="Auth-login-email">E-mail</label>
@@ -48,7 +42,7 @@
               <svg class="Auth-field-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <rect x="3" y="5" width="18" height="14" rx="3" /><path d="m4 7 8 6 8-6" />
               </svg>
-              <input class="Auth-input" id="Auth-login-email" name="email" type="email" inputmode="email" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="icaro.lima@exemplo.com" aria-describedby="Auth-login-email-help" required>
+              <input class="Auth-input" id="Auth-login-email" maxlength="254" name="email" type="email" inputmode="email" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="icaro.lima@exemplo.com" aria-describedby="Auth-login-email-help" required>
             </div>
             <p class="Auth-field-help" id="Auth-login-email-help">Informe um e-mail válido, como nome@exemplo.com.</p>
           </div>
@@ -59,7 +53,7 @@
               <svg class="Auth-field-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <rect x="5" y="10" width="14" height="11" rx="3" /><path d="M8 10V6a4 4 0 0 1 8 0v4" />
               </svg>
-              <input class="Auth-input" id="Auth-login-password" name="password" type="password" autocomplete="current-password" placeholder="••••••••" aria-describedby="Auth-login-password-help" required>
+              <input class="Auth-input" id="Auth-login-password" maxlength="128" name="password" type="password" autocomplete="current-password" placeholder="••••••••" aria-describedby="Auth-login-password-help" required>
               <!-- O olho é um ponto de integração; não altera o tipo do campo sem JS. -->
               <button class="Auth-password-toggle" type="button" aria-label="Mostrar senha" aria-controls="Auth-login-password" disabled>
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z" /><circle cx="12" cy="12" r="2.5" /></svg>
@@ -70,20 +64,16 @@
         </div>
 
         <div class="Auth-options">
-          <label class="Auth-check-label" for="Auth-remember">
-            <input class="Auth-checkbox" id="Auth-remember" name="remember" type="checkbox" checked>
-            <span>Lembrar de mim</span>
-          </label>
           <!-- Abre a recuperação no mesmo documento, usando apenas HTML e CSS. -->
           <a class="Auth-text-action" id="Auth-recover" href="#auth-recovery">Esqueceu a senha?</a>
         </div>
 
-        <!-- Reservado para mensagens de retorno; preencher e retirar hidden no futuro. -->
-        <p class="Auth-feedback" id="Auth-login-feedback" role="status" aria-live="polite" hidden></p>
+        <p class="Auth-registration-note">Sessão de até 2 horas. Reiniciar o servidor exige entrar novamente.</p>
+        <p class="Auth-feedback" id="Auth-login-feedback" tabindex="-1" role="status" aria-live="polite" hidden></p>
         <button class="Auth-button" id="Auth-login-submit" type="submit" disabled>Entrar</button>
       </form>
 
-      <div class="Auth-divider"><span>ou continue com</span></div>
+      <p class="Auth-registration-note">Login com Google ainda não disponível.</p>
       <!-- O ícone G é vetorial e monocromático, como a opção social da referência. -->
       <button class="AuthUP-google" id="Auth-login-google" type="button" disabled>
         <svg class="AuthUP-google-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -115,9 +105,8 @@
         <p class="Auth-subtitle">Comece hoje a organizar seus estudos.</p>
       </div>
 
-      <!-- A comparação das senhas e a política de senha dependem da futura lógica.
-           Não há limites de tamanho arbitrários nem validação falsa de igualdade. -->
-      <form class="Auth-form" id="Auth-signup-form" method="post" aria-labelledby="Auth-signup-title">
+      <!-- O JavaScript envia JSON à API; o servidor repete todas as validações. -->
+      <form class="Auth-form" id="Auth-signup-form" method="post" action="/api/auth/register" aria-labelledby="Auth-signup-title">
         <div class="Auth-fields">
           <div class="Auth-field">
             <label class="Auth-label" for="Auth-signup-name">Nome completo</label>
@@ -125,7 +114,7 @@
               <svg class="Auth-field-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <circle cx="12" cy="7" r="4" /><path d="M4 21v-2a8 8 0 0 1 16 0v2" />
               </svg>
-              <input class="Auth-input" id="Auth-signup-name" name="name" type="text" autocomplete="name" placeholder="Ícaro Lima" aria-describedby="Auth-signup-name-help" required>
+              <input class="Auth-input" id="Auth-signup-name" maxlength="150" name="name" type="text" autocomplete="name" placeholder="Ícaro Lima" aria-describedby="Auth-signup-name-help" required>
             </div>
             <p class="Auth-field-help" id="Auth-signup-name-help">Preencha seu nome completo.</p>
           </div>
@@ -136,7 +125,7 @@
               <svg class="Auth-field-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <rect x="3" y="5" width="18" height="14" rx="3" /><path d="m4 7 8 6 8-6" />
               </svg>
-              <input class="Auth-input" id="Auth-signup-email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="icaro.lima@exemplo.com" aria-describedby="Auth-signup-email-help" required>
+              <input class="Auth-input" id="Auth-signup-email" maxlength="254" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="icaro.lima@exemplo.com" aria-describedby="Auth-signup-email-help" required>
             </div>
             <p class="Auth-field-help" id="Auth-signup-email-help">Informe um e-mail válido, como nome@exemplo.com.</p>
           </div>
@@ -147,9 +136,9 @@
               <svg class="Auth-field-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <rect x="5" y="10" width="14" height="11" rx="3" /><path d="M8 10V6a4 4 0 0 1 8 0v4" />
               </svg>
-              <input class="Auth-input" id="Auth-signup-password" name="password" type="password" autocomplete="new-password" placeholder="••••••••" aria-describedby="Auth-signup-password-help" required>
+              <input class="Auth-input" id="Auth-signup-password" minlength="15" maxlength="128" name="password" type="password" autocomplete="new-password" placeholder="••••••••" aria-describedby="Auth-signup-password-help" required>
             </div>
-            <p class="Auth-field-help" id="Auth-signup-password-help">Preencha uma senha para sua conta.</p>
+            <p class="Auth-field-help" id="Auth-signup-password-help">Use de 15 a 128 caracteres. Você pode usar uma frase.</p>
           </div>
 
           <div class="Auth-field">
@@ -158,28 +147,21 @@
               <svg class="Auth-field-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <rect x="5" y="10" width="14" height="11" rx="3" /><path d="M8 10V6a4 4 0 0 1 8 0v4" />
               </svg>
-              <input class="Auth-input" id="Auth-signup-confirm" name="password_confirmation" type="password" autocomplete="new-password" placeholder="••••••••" aria-describedby="Auth-signup-confirm-help" required>
+              <input class="Auth-input" id="Auth-signup-confirm" minlength="15" maxlength="128" name="password_confirmation" type="password" autocomplete="new-password" placeholder="••••••••" aria-describedby="Auth-signup-confirm-help" required>
             </div>
             <p class="Auth-field-help" id="Auth-signup-confirm-help">Repita a senha informada acima.</p>
           </div>
         </div>
 
-        <!-- O aceite exige uma escolha do usuário, por isso começa desmarcado.
-             Substituir a ação desativada pelo endereço dos termos quando existir. -->
-        <div class="Auth-terms">
-          <label class="Auth-check-label" for="Auth-terms-accept">
-            <input class="Auth-checkbox" id="Auth-terms-accept" name="terms" type="checkbox" required>
-            <span>Li e aceito os <span class="sr-only">termos de uso</span></span>
-          </label>
-          <button class="Auth-terms-link" id="Auth-terms-open" type="button" disabled>termos de uso</button>
-          <span aria-hidden="true">.</span>
-        </div>
+        <p class="Auth-registration-note">Sua conta será salva no banco. Depois do cadastro, use o link Entrar. As atividades ainda são exemplos de demonstração.</p>
+        <p class="Auth-registration-note">Senha: de 15 a 128 caracteres, sem necessidade de combinações obrigatórias.</p>
+        <noscript><p class="Auth-feedback">Ative o JavaScript para cadastrar sua conta.</p></noscript>
 
-        <p class="Auth-feedback" id="Auth-signup-feedback" role="status" aria-live="polite" hidden></p>
+        <p class="Auth-feedback" id="Auth-signup-feedback" tabindex="-1" role="status" aria-live="polite" hidden></p>
         <button class="Auth-button" id="Auth-signup-submit" type="submit" disabled>Criar conta</button>
       </form>
 
-      <div class="Auth-divider"><span>ou continue com</span></div>
+      <p class="Auth-registration-note">Login com Google ainda não disponível.</p>
       <button class="AuthUP-google" id="Auth-signup-google" type="button" disabled>
         <svg class="AuthUP-google-icon" viewBox="0 0 24 24" aria-hidden="true">
           <path fill="currentColor" d="M21.6 12.23c0-.71-.06-1.39-.18-2.05H12v3.88h5.38a4.61 4.61 0 0 1-2 3.02v2.51h3.24c1.9-1.75 2.98-4.33 2.98-7.36ZM12 22c2.7 0 4.96-.9 6.62-2.41l-3.24-2.51c-.9.6-2.06.97-3.38.97-2.61 0-4.82-1.76-5.61-4.13H3.05v2.59A10 10 0 0 0 12 22Zm-5.61-8.08a6 6 0 0 1 0-3.84V7.49H3.05a10 10 0 0 0 0 9.02l3.34-2.59ZM12 5.95c1.47 0 2.79.51 3.83 1.51L18.7 4.6A9.61 9.61 0 0 0 12 2a10 10 0 0 0-8.95 5.49l3.34 2.59C7.18 7.71 9.39 5.95 12 5.95Z" />
@@ -208,7 +190,7 @@
 
       <div class="Auth-intro">
         <h1 class="Auth-title" id="Auth-recovery-title">Recuperar senha</h1>
-        <p class="Auth-subtitle">Informe seu e-mail e enviaremos um código de verificação.</p>
+        <p class="Auth-subtitle">A recuperação por e-mail ainda não está disponível nesta versão.</p>
       </div>
 
       <!-- Envelope decorativo: SVG com traço verde sobre o cartão amarelo claro. -->
@@ -240,5 +222,7 @@
       </form>
     </section>
   </main>
+  <script type="module" src="../../src/js/pages/signup.js"></script>
+  <script type="module" src="../../src/js/pages/login.js"></script>
 </body>
 </html>
