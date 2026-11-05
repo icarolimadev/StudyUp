@@ -10,6 +10,8 @@
 }
 
 .App-symbols { position: absolute; width: 0; height: 0; overflow: hidden; }
+.App-session-status { max-width: 36rem; margin: 3rem auto; padding: 1.5rem; }
+.App-session-status button { margin-top: 1rem; padding: .75rem 1rem; cursor: pointer; }
 .App-icon {
   width: 1.5rem;
   height: 1.5rem;
@@ -50,6 +52,10 @@
 }
 
 .App-panel { max-width: 44rem; margin-inline: auto; overflow-wrap: anywhere; }
+.Data-status { margin-block: .75rem; font-size: .85rem; color: var(--app-muted); }
+.Data-status button { min-height: 2.75rem; padding: .5rem .75rem; border: 1px solid var(--color-border); border-radius: .7rem; color: var(--color-primary-hover); background: white; cursor: pointer; }
+.App-panel:is([data-state="loading"], [data-state="error"]) > :not(h1):not(.Data-status):not(.Home-demo) { display: none !important; }
+.App-panel[data-state="loading"] .Data-status button { display: none; }
 /* Mantém controles focados afastados da navegação fixa ao rolar pelo teclado. */
 .App-page :is(input, select, textarea, button, a, summary) {
   scroll-margin-block: 1rem calc(var(--app-nav-height) + 1rem + env(safe-area-inset-bottom));

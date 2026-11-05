@@ -1,9 +1,10 @@
-import { demoActivities, demoToday } from '../models/demo-state.js';
-import { formatDay, shiftDay } from '../models/inicio-demo.js';
+import { savedTasks } from '../models/task-store.js';
+import { isOverdue } from '../models/task-view.js';
+import { todayKey, formatDay, shiftDay } from '../models/inicio-demo.js';
 import { agendaSlots, isAgendaDate } from '../models/agenda-model.js';
 
 export function mountAgenda() {
-  let selectedDay = demoToday;
+  let selectedDay = todayKey();
   const input = document.getElementById('agenda-date');
   const previous = document.getElementById('agenda-prev');
   const next = document.getElementById('agenda-next');
@@ -23,13 +24,13 @@ export function mountAgenda() {
     next.disabled = selectedDay === '9999-12-31';
     document.getElementById('agenda-date-title').textContent = formatDay(selectedDay, { day: 'numeric', month: 'long' });
     document.getElementById('agenda-weekday').textContent = `${formatDay(selectedDay, { weekday: 'long' })} • ${selectedDay.slice(0, 4)}`;
-    const slots = agendaSlots(demoActivities, selectedDay);
+    const slots = agendaSlots(savedTasks, selectedDay);
     const count = slots.reduce((total, slot) => total + slot.activities.length, 0);
     document.getElementById('agenda-empty').hidden = count > 0;
     timeline.replaceChildren(...slots.map(slot => {
       const row = element('li', 'Agenda-slot');
       const time = element('time', 'Agenda-time', slot.time);
-      time.dateTime = `${selectedDay}T${slot.time}:00-03:00`;
+      time.dateTime = `${selectedDay}T${slot.time.length === 5 ? slot.time + ':00' : slot.time}-03:00`;
       const content = element('div', 'Agenda-slot-content');
       slot.activities.forEach(item => {
         const card = element('details', `Agenda-card Agenda-card--${item.type}`);
@@ -38,6 +39,7 @@ export function mountAgenda() {
         summary.append(element('strong', 'Agenda-card-title', item.title));
         summary.append(element('span', 'Agenda-card-subject', item.subject || 'Sem disciplina'));
         summary.append(element('span', 'Agenda-card-type', `${labels[item.type]}${item.done ? ' • Concluída' : ''}`));
+        if (isOverdue(item)) summary.append(element('span', 'Tasks-badge Tasks-badge--high', 'Atrasada'));
         card.append(summary);
         if (item.description) card.append(element('p', 'Agenda-details', item.description));
         card.append(element('p', 'Agenda-details', `Horário: ${item.time} • Prioridade: ${item.priority}`));
@@ -60,7 +62,7 @@ export function mountAgenda() {
     render(true);
   });
   document.getElementById('agenda-today').addEventListener('click', () => {
-    selectedDay = demoToday;
+    selectedDay = todayKey();
     render(true);
   });
   input.addEventListener('change', () => {

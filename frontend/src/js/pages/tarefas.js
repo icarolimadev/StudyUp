@@ -1,6 +1,6 @@
-import { demoToday, demoActivities, getDemoSubjects } from '../models/demo-state.js';
-import { filterTasks } from '../models/tarefas-model.js';
-import { formatDay, shiftDay } from '../models/inicio-demo.js';
+import { savedTasks, savedSubjects, saveTask, removeTask, taskError } from '../models/task-store.js';
+import { filterSavedTasks, isOverdue } from '../models/task-view.js';
+import { todayKey, formatDay, shiftDay } from '../models/inicio-demo.js';
 
 export function mountTasks() {
   const list = document.getElementById('tasks-list');
@@ -11,10 +11,13 @@ export function mountTasks() {
   const empty = document.getElementById('tasks-empty');
   const feedback = document.getElementById('tasks-feedback');
   let selectedPeriod = 'todas';
+  const pending = new Set();
+  const status = document.getElementById('tasks-status-filter');
   const help = {
     todas: 'Todas as tarefas, incluindo concluídas.',
     hoje: 'Tarefas de hoje, incluindo concluídas.',
     proximas: 'Pendentes de amanhã até os próximos 7 dias.',
+    atrasadas: 'Tarefas pendentes cujo prazo já passou.',
     concluidas: 'Tarefas concluídas. Desmarque para reabrir.',
   };
 
@@ -30,25 +33,25 @@ export function mountTasks() {
     const emptyOption = element('option', '', 'Todas as disciplinas');
     emptyOption.value = '';
     subject.replaceChildren(emptyOption);
-    getDemoSubjects().forEach(name => {
-      const option = element('option', '', name);
-      option.value = name;
+    savedSubjects.forEach(item => {
+      const option = element('option', '', item.name);
+      option.value = String(item.id);
       subject.append(option);
     });
-    subject.value = getDemoSubjects().includes(selected) ? selected : '';
+    subject.value = savedSubjects.some(item => String(item.id) === selected) ? selected : '';
   }
 
   function dateLabel(day) {
-    if (day === demoToday) return 'Hoje';
-    if (day === shiftDay(demoToday, 1)) return 'Amanhã';
+    if (day === todayKey()) return 'Hoje';
+    if (day === shiftDay(todayKey(), 1)) return 'Amanhã';
     return formatDay(day, { day: 'numeric', month: 'short' });
   }
 
   function render() {
-    const items = filterTasks(demoActivities, {
+    const items = filterSavedTasks(savedTasks, {
       period: selectedPeriod, query: search.value,
-      subject: subject.value, priority: priority.value,
-    }, demoToday);
+      subject: subject.value, priority: priority.value, status: status.value,
+    });
     periods.querySelectorAll('button').forEach(button => {
       button.setAttribute('aria-pressed', String(button.dataset.period === selectedPeriod));
     });
@@ -62,6 +65,7 @@ export function mountTasks() {
       const checkbox = element('input', 'Tasks-check');
       checkbox.type = 'checkbox';
       checkbox.checked = item.done;
+      checkbox.disabled = pending.has(item.id);
       checkbox.dataset.taskId = String(item.id);
       checkbox.setAttribute('aria-label', `${item.done ? 'Reabrir' : 'Concluir'} tarefa: ${item.title}`);
       const content = element('div', 'Tasks-card-content');
@@ -72,26 +76,43 @@ export function mountTasks() {
       const date = element('time', '', dateLabel(item.date));
       date.dateTime = item.date;
       meta.append(date, element('span', '', item.time));
+      if (isOverdue(item)) heading.append(element('span', 'Tasks-badge Tasks-badge--high', 'Atrasada'));
       content.append(heading, element('p', 'Tasks-subject', item.subject || 'Sem disciplina'), meta);
-      if (item.description || item.reminderMinutes) {
+      if (item.description) {
         const details = element('details', 'Tasks-details');
         details.append(element('summary', '', 'Detalhes'));
         if (item.description) details.append(element('p', '', item.description));
-        if (item.reminderMinutes) details.append(element('p', '', `Lembrete: ${item.reminderMinutes} minutos antes (sem envio nesta demonstração).`));
         content.append(details);
       }
-      checkbox.addEventListener('change', () => {
-        const oldIndex = items.findIndex(task => task.id === item.id);
-        item.done = checkbox.checked;
+      async function mutate(action, message) {
+        if (pending.has(item.id)) return;
+        pending.add(item.id);
         render();
-        // Na aba Concluídas, reabrir remove o cartão. Manter foco em algo útil.
-        const controls = [...list.querySelectorAll('input')];
-        const nextFocus = controls.find(input => input.dataset.taskId === String(item.id))
-          || controls[Math.min(oldIndex, controls.length - 1)]
-          || periods.querySelector('[aria-pressed="true"]');
-        nextFocus.focus({ preventScroll: true });
-        feedback.textContent = `${item.title}: ${item.done ? 'concluída' : 'reaberta'} nesta demonstração.`;
+        try {
+          await action();
+          feedback.textContent = message;
+        } catch (error) { feedback.textContent = taskError(error); }
+        finally {
+          pending.delete(item.id); render();
+          (list.querySelector(`[data-task-id="${item.id}"]`) || periods.querySelector('[aria-pressed="true"]')).focus({ preventScroll: true });
+        }
+      }
+      checkbox.addEventListener('change', () => {
+        const done = checkbox.checked;
+        mutate(() => saveTask(item.id, { status: done ? 'concluida' : 'pendente' }), `${item.title}: ${done ? 'concluída' : 'reaberta'} e salva.`);
       });
+      const actions = element('div', 'Tasks-actions');
+      const edit = element('a', 'Tasks-text-link', 'Editar');
+      edit.href = `#adicionar?editar=${item.id}`;
+      edit.setAttribute('aria-label', `Editar ${item.title}`);
+      if (pending.has(item.id)) { edit.removeAttribute('href'); edit.setAttribute('aria-disabled', 'true'); }
+      const remove = element('button', 'Tasks-delete', 'Excluir');
+      remove.type = 'button'; remove.disabled = pending.has(item.id);
+      remove.setAttribute('aria-label', `Excluir ${item.title}`);
+      remove.addEventListener('click', () => {
+        if (window.confirm(`Excluir a tarefa “${item.title}”? Essa ação não pode ser desfeita.`)) mutate(() => removeTask(item.id), `“${item.title}” excluída.`);
+      });
+      actions.append(edit, remove); content.append(actions);
       card.append(checkbox, content);
       return card;
     }));
@@ -106,11 +127,13 @@ export function mountTasks() {
   search.addEventListener('input', render);
   subject.addEventListener('change', render);
   priority.addEventListener('change', render);
+  status.addEventListener('change', render);
   document.getElementById('tasks-clear').addEventListener('click', () => {
     selectedPeriod = 'todas';
     search.value = '';
     subject.value = '';
     priority.value = '';
+    status.value = '';
     render();
     search.focus();
   });
@@ -123,6 +146,7 @@ export function mountTasks() {
       search.value = '';
       subject.value = '';
       priority.value = '';
+      status.value = '';
     }
     refreshSubjects();
     render();

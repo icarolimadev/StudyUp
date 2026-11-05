@@ -47,29 +47,34 @@
     </symbol>
   </svg>
 
-  <div class="App-shell">
+  <section id="session-status" class="App-session-status" role="status">
+    <p id="session-message">Consultando sua conta…</p>
+    <button id="session-retry" type="button" hidden>Tentar novamente</button>
+    <noscript>Ative o JavaScript para acessar sua conta.</noscript>
+  </section>
+  <div class="App-shell" hidden>
     <header class="App-header">
       <a class="App-brand" href="#inicio" aria-label="StudyUp — início">
         <span class="App-brand-mark"><svg class="App-icon" aria-hidden="true"><use href="#icon-book" /></svg></span>
         <span>Study<span class="App-brand-accent">Up</span></span>
       </a>
       <div class="Profile-header-actions">
-        <span class="App-preview-label">Prévia</span>
-        <a class="Profile-header-link" href="#perfil" aria-label="Abrir perfil de demonstração">
+        <span class="App-preview-label">Conta</span>
+        <a class="Profile-header-link" href="#perfil" aria-label="Abrir meu perfil">
           <svg class="App-icon" aria-hidden="true"><use href="#icon-user" /></svg>
         </a>
       </div>
     </header>
 
-    <!-- Início e Tarefas compartilham exemplos em memória. -->
+    <!-- Início, Tarefas e Agenda consultam as tarefas persistidas da conta. -->
     <main class="App-content" id="conteudo" tabindex="-1">
       <section class="App-panel Home" id="inicio" data-page-title="Início" aria-labelledby="inicio-title">
         <p class="Home-date" id="home-date"></p>
         <h1 id="inicio-title" tabindex="-1">Olá, estudante!</h1>
         <p class="App-intro">Vamos organizar seu dia?</p>
-        <p class="Home-demo">Dados de demonstração. Alterações duram até recarregar a página.</p>
+        <p class="Home-demo">Tarefas salvas na sua conta.</p>
         <div class="Home-week" id="home-week" role="group" aria-label="Selecionar dia da semana"></div>
-        <div class="Home-stats" id="home-stats" role="group" aria-label="Atividades do dia selecionado"></div>
+        <div class="Home-stats" id="home-stats" role="group" aria-label="Resumo de todas as tarefas da conta"></div>
         <div class="Home-columns">
           <section class="Home-section" aria-labelledby="home-tasks-title">
             <div class="Tasks-section-heading">
@@ -81,19 +86,20 @@
           </section>
           <section class="Home-section" aria-labelledby="home-deadlines-title">
             <h2 id="home-deadlines-title">Próximos prazos</h2>
-            <p class="Home-caption">Pendências a partir de hoje</p>
+            <p class="Home-caption">Pendências com prazo a partir de agora</p>
             <ul class="Home-deadlines" id="home-deadlines"></ul>
           </section>
         </div>
-        <p class="sr-only" id="home-feedback" role="status" aria-live="polite"></p>
+        <p class="Tasks-help" id="home-feedback" role="status" aria-live="polite"></p>
       </section>
       <section class="App-panel Tasks" id="tarefas" aria-labelledby="tarefas-title" hidden>
         <h1 id="tarefas-title" tabindex="-1">Tarefas</h1>
-        <p class="Home-demo">Dados de demonstração. Alterações duram até recarregar a página.</p>
+        <p class="Home-demo">Tarefas salvas na sua conta.</p>
         <div class="Tasks-periods" id="tasks-periods" role="group" aria-label="Filtrar tarefas por período ou conclusão">
           <button type="button" data-period="todas" aria-pressed="true">Todas</button>
           <button type="button" data-period="hoje" aria-pressed="false">Hoje</button>
           <button type="button" data-period="proximas" aria-pressed="false">Próximas</button>
+          <button type="button" data-period="atrasadas" aria-pressed="false">Atrasadas</button>
           <button type="button" data-period="concluidas" aria-pressed="false">Concluídas</button>
         </div>
         <p class="Tasks-help" id="tasks-period-help">Todas as tarefas, incluindo concluídas.</p>
@@ -103,6 +109,9 @@
           </label>
           <label for="tasks-subject">Disciplina
             <select id="tasks-subject"><option value="">Todas as disciplinas</option></select>
+          </label>
+          <label for="tasks-status-filter">Estado
+            <select id="tasks-status-filter"><option value="">Todos</option><option value="pendente">Pendentes</option><option value="concluida">Concluídas</option></select>
           </label>
           <label for="tasks-priority">Prioridade
             <select id="tasks-priority">
@@ -117,11 +126,11 @@
         </div>
         <ul class="Tasks-list" id="tasks-list"></ul>
         <p class="Home-empty" id="tasks-empty" hidden>Nenhuma tarefa encontrada. Experimente outro período ou limpe os filtros.</p>
-        <p class="sr-only" id="tasks-feedback" role="status" aria-live="polite"></p>
+        <p class="Tasks-help" id="tasks-feedback" role="status" aria-live="polite"></p>
       </section>
       <section class="App-panel Agenda" id="agenda" aria-labelledby="agenda-title" hidden>
         <h1 id="agenda-title" tabindex="-1">Agenda</h1>
-        <p class="Home-demo">Dados de demonstração. Horários de Fortaleza.</p>
+        <p class="Home-demo">Suas tarefas por prazo. Horários de Fortaleza.</p>
         <div class="Agenda-modes" aria-label="Visualização da agenda">
           <span class="Agenda-mode-active">Dia <span class="sr-only">selecionado</span></span>
           <span>Semana <small>Em breve</small></span>
@@ -148,7 +157,7 @@
       </section>
       <section class="App-panel Add" id="adicionar" aria-labelledby="adicionar-title" hidden>
         <h1 id="adicionar-title" tabindex="-1">Adicionar atividade</h1>
-        <p class="Home-demo">Demonstração: os dados serão apagados ao recarregar.</p>
+        <p class="Home-demo">A tarefa será salva na sua conta.</p>
         <div class="Add-types" aria-label="Tipos de atividade">
           <span class="Add-type Add-type--selected"><span aria-hidden="true">✓</span>Tarefa <span class="sr-only">selecionada</span></span>
           <span class="Add-type"><svg class="App-icon" aria-hidden="true"><use href="#icon-folder" /></svg>Projeto<small>Em breve</small></span>
@@ -168,7 +177,7 @@
           </label>
           <div class="Add-row">
             <label for="add-date">Data *<input id="add-date" name="date" type="date" min="1000-01-01" max="9999-12-31" required></label>
-            <label for="add-time">Horário *<input id="add-time" name="time" type="time" value="23:59" required></label>
+            <label for="add-time">Horário *<input id="add-time" name="time" type="time" step="1" value="23:59" required></label>
           </div>
           <fieldset class="Add-priorities">
             <legend>Prioridade</legend>
@@ -180,9 +189,9 @@
           </fieldset>
           <div class="Add-reminder">
             <label class="Add-switch-label" for="add-reminder">Adicionar lembrete
-              <input id="add-reminder" name="reminderEnabled" type="checkbox" role="switch" aria-describedby="add-reminder-help" aria-controls="add-reminder-options">
+              <input id="add-reminder" name="reminderEnabled" type="checkbox" disabled role="switch" aria-describedby="add-reminder-help" aria-controls="add-reminder-options">
             </label>
-            <p class="Add-help" id="add-reminder-help">A preferência será guardada nesta demonstração. Ainda não enviamos notificações.</p>
+            <p class="Add-help" id="add-reminder-help">Lembretes ainda não disponíveis. Nenhum aviso será agendado.</p>
           </div>
           <label id="add-reminder-options" for="add-reminder-minutes" hidden>Lembrar
             <select id="add-reminder-minutes" name="reminderMinutes" disabled>
@@ -194,6 +203,7 @@
           </label>
           <p class="Add-error" id="add-error" role="alert" hidden></p>
           <button class="Add-submit" type="submit">Salvar tarefa</button>
+          <a id="add-cancel-edit" class="Tasks-text-link" href="#tarefas" hidden>Cancelar edição</a>
         </form>
         <div class="Add-result" id="add-result" hidden>
           <p id="add-success" role="status" aria-live="polite" tabindex="-1"></p>
@@ -202,7 +212,9 @@
       </section>
       <section class="App-panel Subjects" id="disciplinas" aria-labelledby="disciplinas-title" hidden>
         <h1 id="disciplinas-title" tabindex="-1">Disciplinas</h1>
-        <p class="Home-demo">Demonstração: os dados serão apagados ao recarregar.</p>
+        <p class="Home-demo">Disciplinas salvas na sua conta. Os contadores incluem suas tarefas pendentes.</p>
+        <p class="Subjects-feedback" id="subjects-status" role="status"></p>
+        <button class="Subjects-cancel" id="subjects-retry" type="button" hidden>Atualizar lista</button>
         <ul class="Subjects-list" id="subjects-list"></ul>
         <p class="Home-empty" id="subjects-empty" hidden>Cadastre sua primeira disciplina para organizar as atividades.</p>
         <button class="Subjects-new" id="subjects-new" type="button" aria-expanded="false" aria-controls="subject-form-panel">
@@ -308,27 +320,27 @@
         <h1 class="sr-only" id="perfil-title" tabindex="-1">Perfil</h1>
         <div class="Profile-identity">
           <span class="Profile-avatar" aria-hidden="true"><svg class="App-icon"><use href="#icon-user" /></svg></span>
-          <h2 data-profile-name>Estudante exemplo</h2>
-          <p data-profile-email>estudante@example.com</p>
+          <h2 data-profile-name>Carregando…</h2>
+          <p data-profile-email></p>
           <span class="Profile-role">Estudante</span>
         </div>
-        <p class="Profile-demo">Perfil fictício da demonstração. Não há uma conta autenticada nesta prévia.</p>
+        <p class="Profile-demo">Conta autenticada. Tarefas e disciplinas são salvas. Projetos e notificações continuam como exemplos.</p>
         <div class="Profile-options">
           <details class="Profile-personal">
             <summary><span class="Profile-option-icon"><svg class="App-icon" aria-hidden="true"><use href="#icon-user" /></svg></span>Informações pessoais</summary>
             <dl class="Profile-info">
-              <dt>Nome</dt><dd data-profile-name>Estudante exemplo</dd>
-              <dt>E-mail</dt><dd data-profile-email>estudante@example.com</dd>
+              <dt>Nome</dt><dd data-profile-name>Carregando…</dd>
+              <dt>E-mail</dt><dd data-profile-email></dd>
             </dl>
-            <p class="Profile-note">Edição disponível após a implementação das contas.</p>
+            <p class="Profile-note">Edição de informações pessoais ainda não disponível.</p>
           </details>
           <a class="Profile-option" href="#preferencias-notificacoes"><span class="Profile-option-icon"><svg class="App-icon" aria-hidden="true"><use href="#icon-settings" /></svg></span><span>Preferências de notificações</span><small aria-hidden="true">›</small></a>
           <a class="Profile-option" href="#notificacoes"><span class="Profile-option-icon"><svg class="App-icon" aria-hidden="true"><use href="#icon-bell" /></svg></span><span>Notificações</span><small data-notification-count></small></a>
           <button class="Profile-option" type="button" disabled><span class="Profile-option-icon" aria-hidden="true">☼</span><span>Tema</span><small>Em breve</small></button>
           <button class="Profile-option" type="button" disabled><span class="Profile-option-icon"><svg class="App-icon" aria-hidden="true"><use href="#icon-lock" /></svg></span><span>Segurança</span><small>Em breve</small></button>
         </div>
-        <button class="Profile-logout" type="button" disabled aria-describedby="profile-session-help">Sair da conta</button>
-        <p class="Profile-note" id="profile-session-help">Disponível quando o login real estiver implementado.</p>
+        <button class="Profile-logout" type="button" data-logout aria-describedby="profile-session-help">Sair da conta</button>
+        <p class="Profile-note" id="profile-session-help" data-logout-feedback role="status"></p>
       </section>
       <noscript><p class="App-noscript">Ative o JavaScript para navegar nesta prévia.</p></noscript>
     </main>
@@ -365,7 +377,7 @@
     </div>
     <a class="More-profile" href="#perfil">
       <span class="More-avatar"><svg class="App-icon" aria-hidden="true"><use href="#icon-user" /></svg></span>
-      <span class="More-profile-copy"><strong data-profile-name>Estudante exemplo</strong><small>Perfil de demonstração</small></span>
+      <span class="More-profile-copy"><strong data-profile-name>Carregando…</strong><small data-profile-email></small></span>
       <span aria-hidden="true">›</span>
     </a>
     <nav class="More-links" aria-label="Navegação complementar">
@@ -378,7 +390,9 @@
       <a href="#notificacoes"><svg class="App-icon" aria-hidden="true"><use href="#icon-bell" /></svg><span>Notificações</span><small data-notification-count></small></a>
       <a href="#perfil"><svg class="App-icon" aria-hidden="true"><use href="#icon-settings" /></svg><span>Perfil e configurações</span><span aria-hidden="true">›</span></a>
     </nav>
-    <p class="More-note">Prévia sem sessão autenticada. Login e saída da conta serão integrados na etapa de autenticação.</p>
+    <button class="Profile-logout" type="button" data-logout>Sair da conta</button>
+    <p class="More-note" data-logout-feedback role="status"></p>
+    <p class="More-note">Tarefas e disciplinas salvas na conta. Projetos e notificações são exemplos.</p>
   </dialog>
 </body>
 </html>
