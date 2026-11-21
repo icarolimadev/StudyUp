@@ -15,6 +15,8 @@ Abra http://127.0.0.1:3000 para a entrada ou http://127.0.0.1:3000/views/pages/a
 
 Use `npm run dev` para reiniciar o servidor automaticamente durante o desenvolvimento, `npm test` para os testes automatizados e `Ctrl+C` para encerrar. Configuração em `env/.env`, usando `.env.example` como referência; o fluxo de contas e tarefas precisa do MySQL configurado.
 
+Cadastro e login precisam ser abertos pelo servidor iniciado com `npm start`. Live Preview/Live Server do VS Code apenas exibem os arquivos e não executam `/api/auth`. Se a prévia estiver ocupando a porta 3000, use `PORT=3002 npm start` (Linux/macOS) e abra http://127.0.0.1:3002/views/pages/auth.html#auth-signup. Para conferir, `/api/status` deve retornar JSON com `application: "StudyUp"` e `database: "connected"`; uma página HTML ou “File not found” indica o servidor errado. Verifique o banco com `npm run db:check`.
+
 ## Estado atual
 
 - Início, Tarefas, Adicionar/Editar e Agenda diária integrados às tarefas reais da conta.

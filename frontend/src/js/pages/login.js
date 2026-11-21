@@ -1,3 +1,5 @@
+import { AuthResponseError, readAuthResponse } from '../components/auth-response.js';
+
 const form = document.getElementById('Auth-login-form');
 const submit = document.getElementById('Auth-login-submit');
 const feedback = document.getElementById('Auth-login-feedback');
@@ -19,7 +21,7 @@ form.addEventListener('submit', async event => {
       body: JSON.stringify({ email: email.value, password: password.value }),
       signal: AbortSignal.timeout(15000),
     });
-    const result = await response.json();
+    const result = await readAuthResponse(response);
     if (!response.ok) {
       feedback.textContent = result.error || 'Não foi possível entrar. Tente novamente.';
       feedback.hidden = false;
@@ -28,8 +30,8 @@ form.addEventListener('submit', async event => {
     }
     password.value = '';
     window.location.assign('/views/pages/app.html#inicio');
-  } catch {
-    feedback.textContent = 'Não foi possível confirmar o login. Confira sua conexão e tente novamente.';
+  } catch (error) {
+    feedback.textContent = error instanceof AuthResponseError ? error.message : 'Não foi possível confirmar o login. Confira sua conexão e tente novamente.';
     feedback.hidden = false;
     feedback.focus();
   } finally {

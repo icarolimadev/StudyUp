@@ -947,3 +947,77 @@ Se houver um servidor antigo aberto com `npm start`, reiniciá-lo para carregar 
 - Próximo passo: H1 (contas e planos gratuitos) e H2 (adaptações do código antes da publicação). Nenhum serviço externo criado; nenhum push realizado.
 
 - Verificação após retomada: conexão HTTPS com Render respondeu HTTP 200; suíte final com 54 testes aprovados e verificação de diferenças sem erros.
+
+### Auditoria dos oito commits antes do envio — 05/11/2026
+
+- Conferidos os arquivos dos oito commits, 122 conteúdos distintos entre seus estados e 99 arquivos rastreados no estado final.
+- `env/.env` não está rastreado; toda a pasta `env/` continua ignorada. Permissões confirmadas: pasta 0700 e arquivo 0600.
+- Não foram encontrados arquivos privados de configuração, chaves, backups, dumps, logs ou node_modules indevidamente rastreados. `.env.example` contém somente exemplos e deve permanecer versionado.
+- Busca por assinaturas de tokens/chaves e revisão das atribuições literais não identificaram credenciais reais. Valores encontrados são exemplos, dados fictícios de testes ou mensagens de validação.
+- A senha ativa do MySQL não apareceu nos arquivos versionados nem nos blobs do histórico Git alcançável. A análise não garante detectar credenciais antigas desconhecidas ou segredos em formatos não reconhecidos.
+- `.gitkeep` e `frontend/src/js/pages/authNavigation.js` continuam não rastreados, conforme organização anterior. Nenhum push realizado e nenhum commit reescrito. Este registro de auditoria fica como alteração documental posterior aos oito commits.
+
+### Conferência de bcrypt/scrypt com a documentação — 05/11/2026
+
+- Solicitação recebida com o termo “byscript”, possivelmente uma referência a bcrypt.
+- No texto extraído do PDF fornecido, a página 4 define `senha_hash VARCHAR(255)` e orienta nunca armazenar senha pura. Não foi localizada menção explícita a bcrypt, scrypt ou byscript nesse texto.
+- Implementação atual em `backend/security/password.js`: scrypt nativo de node:crypto, salt aleatório por senha e verificação com timingSafeEqual. Bcrypt não está implementado nem listado como dependência direta.
+- O requisito identificado de armazenar hash, em vez da senha pura, está atendido. Se houver outra versão da documentação exigindo bcrypt especificamente, será necessário decidir uma migração que preserve o acesso às contas existentes. Nenhum algoritmo ou dependência foi alterado nesta conferência.
+
+## 14. TLS do banco — configuração e testes, primeira etapa (05/11/2026)
+
+Escopo autorizado: helper de TLS, integração com database.js e testes. Não foram alterados server.js, sessões, proxy, frontend, dependências ou configuração local de credenciais. Sem commit ou deploy.
+
+- Criado `backend/config/database-tls.js`: aceita DB_TLS true/false em texto, exige TLS em produção e DB_CA_FILE quando ativado; lê PEM/bundle, verifica indicação de CA e período de validade com X509Certificate. Erros de leitura não expõem caminho/conteúdo nem mensagens internas. TLS usa rejectUnauthorized=true, verifyIdentity=true e mínimo TLS 1.2; nenhuma alternativa insegura foi adicionada.
+- `database.js` preserva banco local sem TLS e ausência de configuração local. Produção exige credenciais e TLS; conexões TLS exigem hostname DNS, evitando o caminho de IP literal no mysql2. Pool, parâmetros de consultas, datas e demais limites foram preservados.
+- Adicionados 17 testes unitários. Resultado de `npm test`: **71 aprovados**, incluindo os **54 anteriores**, sem falhas ou testes ignorados. Fixtures contêm somente certificados públicos fictícios; suas chaves privadas foram descartadas.
+- Teste real reproduzível: `node --test backend/tests/integration/mysql-tls.test.js`. MySQL 8.4.11 temporário, diretório/socket próprios e porta livre em loopback; não usa .env nem o banco StudyUp. Resultado final: **seis cenários aprovados** (sete testes contados pelo runner, incluindo agrupador).
+- Evidência real: CA/hostname corretos conectam com cifra TLS; CA não emissora e hostname divergente são recusados pelo mysql2 3.24.6. Servidor sem TLS não aceita a configuração segura; configuração local continua conectando sem TLS. O MySQL também recusou ativar certificado de servidor vencido; esse cenário não é evidência de handshake do cliente com certificado vencido.
+- Ajustes no teste durante desenvolvimento: certificado vencido passou a ser gerado com datas explícitas; desligamento por SHUTDOWN no socket privado substituiu sinais recusados pelo ambiente; opção antiga skip-ssl foi substituída por tls-version vazio, compatível com MySQL 8.4. Reteste completo aprovado e instâncias temporárias encerradas/removidas.
+- `npm run db:check`: conexão local OK e tabelas usuarios, disciplinas e tarefas encontradas. `git diff --check`: sem erros.
+
+Variáveis previstas para Aiven: NODE_ENV=production, DB_TLS=true, DB_HOST com hostname do serviço, DB_PORT/DB_NAME/DB_USER/DB_PASSWORD fornecidos/configurados no provedor e DB_CA_FILE=/etc/secrets/aiven-ca.pem. Localmente, nenhuma mudança é necessária; DB_TLS pode continuar ausente. Não foi cadastrado certificado Aiven nem criado serviço remoto nesta etapa.
+
+**Limite importante:** erros de configuração são lançados ao ler a configuração/criar o pool, e certificados incorretos são rejeitados na conexão. Como server.js não foi alterado, ainda não existe verificação do banco antes de abrir a porta HTTP em produção; essa inicialização estrita e o diagnóstico do db:check permanecem para uma etapa posterior. getDatabaseStatus continua convertendo falhas em resposta genérica segura.
+
+Explicação dos testes e requisitos em `backend/tests/integration/README.md`. Logs temporários desta execução: `/tmp/studyup-tls-unit.log` e `/tmp/studyup-tls-integration.log`.
+
+## 15. Inicialização de produção condicionada ao MySQL — H2 (05/11/2026)
+
+Escopo autorizado: adaptar server.js, preservar funcionamento local/comandos e criar testes de inicialização. Sem alterações de sessões, proxy, frontend, package.json ou credenciais; sem commit ou deploy.
+
+- `backend/server.js` agora chama getPool().execute com SELECT 1 e timeout de consulta de cinco segundos antes de app.listen quando NODE_ENV=production. A criação do pool aplica a validação de configuração/TLS da etapa anterior; a consulta força a conexão real. O connectTimeout de cinco segundos do pool foi mantido.
+- Falhas de configuração exibem mensagens controladas de DatabaseConfigError. Falhas reconhecidas de TLS e demais falhas de conexão exibem orientações genéricas, sem mensagens/stack brutos, SQL, senha ou conteúdo PEM. O pool é fechado e o processo termina com código 1 antes de abrir HTTP ou anunciar sucesso.
+- Se a porta HTTP estiver ocupada após a conexão de produção, o tratamento existente agora também fecha o pool, permitindo que o processo encerre. Validação de PORT e comportamento local foram preservados.
+- `backend/tests/server-startup.test.js`: oito cenários novos executam o processo real. Cobrem sucesso local sem banco, TLS desligado, credenciais incompletas, CA ausente/ilegível, banco indisponível, porta HTTP fechada enquanto aguarda banco e proteção contra vazamento de erro bruto do protocolo MySQL.
+- `backend/tests/helpers/server-process.js`: cria subprocessos com ambiente de teste sem herdar DB_*/.env, captura saída, controla encerramento e verifica portas TCP. Não modifica o comportamento da aplicação.
+- Integração MySQL/TLS ampliada: cinco cenários novos comprovam inicialização de produção e SELECT 1 no log do MySQL temporário antes de qualquer GET, rejeição de CA/senha/hostname e limpeza do pool com porta ocupada. Credenciais e dados desse teste existem somente na instância descartável.
+
+**Resultados:** npm test passou com **79 testes**, preservando os 71 anteriores (incluindo os 54 originais). Teste real de integração passou com **11 cenários** (12 testes contados com o agrupador), sem falhas ou testes ignorados. npm run db:check confirmou o MySQL local e as três tabelas. git diff --check sem erros.
+
+O primeiro teste de sucesso exigia stderr vazio e encontrou o aviso já existente do express-session sobre MemoryStore em produção. A expectativa foi corrigida para não confundir esse aviso com falha de inicialização; nenhuma sessão ou configuração do middleware foi alterada e o aviso não foi escondido.
+
+Reprodução: `npm test`, `node --test backend/tests/integration/mysql-tls.test.js` e `npm run db:check`. Logs temporários: `/tmp/studyup-startup-tests.log` e `/tmp/studyup-startup-integration.log`. Instância MySQL temporária encerrada e arquivos removidos.
+
+**Limites:** esta checagem confirma conexão/SELECT 1 na partida, não existência/migração de tabelas nem disponibilidade contínua do banco. Não houve teste remoto na Aiven. Sessões persistentes, proxy e demais itens de H2 continuam pendentes; esta mudança isolada não torna o projeto pronto para publicação.
+
+## 16. Artefatos locais para preparar o esquema Aiven — 06/11/2026
+
+Escopo autorizado: migração inicial, validador de estrutura, procedimento e teste em MySQL descartável. Não houve conexão à Aiven, migração remota, acesso ao banco local StudyUp, commit ou deploy.
+
+- Criado `backend/database/migrations/001-initial.sql`: as três tabelas do núcleo, na ordem de dependência, sem CREATE DATABASE/USE/IF NOT EXISTS. Mantidos tipos, defaults, índices, FKs, CHECKs e InnoDB. Charset/collation utf8mb4/utf8mb4_0900_ai_ci são explícitos em cada tabela, equivalentes aos padrões herdados no original. DATETIME de prazo/conclusão e TIMESTAMP de auditoria foram preservados.
+- Criado `001-expected-schema.json`: referência de SHOW CREATE TABLE extraída do esquema original aplicado em MySQL 8.4.11 descartável. Somente estrutura, sem registros ou credenciais; referência não se atualiza automaticamente.
+- Criado `backend/database/validate-schema.js`: inspeção somente SELECT/SHOW do banco selecionado, charset/collation e definição completa das tabelas. Ignora apenas contador de próximo AUTO_INCREMENT e normalizações de texto externas. Tabelas extras geram informação separada; não são apagadas nem implicitamente validadas, permitindo evolução futura de sessões.
+- Criado `backend/scripts/validate-database-schema.js`: CLI exige destino explícito, reaproveita configuração/TLS, não carrega env/.env automaticamente e retorna 0/1 conforme resultado. Não cria ou corrige estruturas. Funciona com usuário somente SELECT e mantém mensagens seguras.
+- Criado roteiro `backend/database/migrations/README.md`: destino explícito, CA, preflight, banco vazio, checksum/registro de execução, aplicação interrompida em erro, recuperação de estado parcial, grants mínimos e validação. README local recebeu link e correções de descrições antigas sobre APIs ainda não implementadas.
+- Testes em `backend/tests/schema-validator.test.js`, `backend/tests/integration/mysql-schema.test.js` e helper `backend/tests/helpers/disposable-mysql.js`. A instância usa datadir/socket próprios e porta temporária em loopback, sem .env, sudo, systemctl ou configuração do MySQL StudyUp.
+
+**Resultados finais:** `npm test`: **86 aprovados**, preservando os 79 anteriores. Integração descartável: **14 cenários aprovados** (15 testes com o agrupador). Conferidos: equivalência estrutural original/migração/referência, rejeição de reaplicação, unicidade, FK entre donos, exclusão restrita, CHECKs e horário DATETIME inalterado entre sessões +00:00/-03:00. O validador detectou coluna/índice/FK/CHECK/collation/tipo de prazo/tabela ausente e CHECK desativado. CLI com usuário somente SELECT retornou 0 no esquema correto e 1 no divergente, sem reparar a tabela ou modificar registros. Tabela adicional fictícia de sessões foi apenas informada.
+
+O teste real detectou reutilização do contexto anterior em consultas preparadas de metadados ao alternar bancos com USE. A inspeção passou a usar query parametrizada sem cache de prepared statements; o reteste completo aprovou a comparação entre bancos distintos e todas as divergências provocadas. A migração não precisou mudar. O executor exclusivo de testes também foi corrigido para remover comentários SQL indentados antes de dividir as instruções simples.
+
+A primeira tentativa de executar a suíte completa foi impedida por falha da revisão automática de aprovação por limite de uso, não por julgamento de risco; retomada e execução final ocorreram nesta data.
+
+Preservação confirmada byte a byte contra HEAD: `backend/database/schema.sql` (SHA256 b7ab3f570a156f0b67071b3198a21a3c7b5f7f4135dfbed2917ee54dcc72e74c) e `backend/scripts/setup-database.js` (SHA256 f37c37f3e9a3bd3e1296483f6d4c1ae87c9e49d708a353b71bc1a62998e1f51e). Nenhuma instância/diretório descartável permaneceu. git diff --check sem erros.
+
+Limites: comparação estrita de SHOW CREATE TABLE pode exigir revisão entre versões MySQL; validador não audita grants, triggers/rotinas ou tabelas adicionais. Não comprova que o serviço remoto já está preparado. Sessões persistentes terão migração e contrato próprios; não foram implementadas. Logs temporários: `/tmp/studyup-schema-unit.log` e `/tmp/studyup-schema-integration.log`.

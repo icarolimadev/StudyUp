@@ -1,3 +1,5 @@
+import { AuthResponseError, readAuthResponse } from '../components/auth-response.js';
+
 const form = document.getElementById('Auth-signup-form');
 const submit = document.getElementById('Auth-signup-submit');
 const feedback = document.getElementById('Auth-signup-feedback');
@@ -30,6 +32,11 @@ form.addEventListener('submit', async event => {
     fields.password_confirmation.reportValidity();
     return;
   }
+
+
+
+
+
   const payload = Object.fromEntries(names.map(name => [name, fields.namedItem(name).value]));
   submit.disabled = true;
   submit.textContent = 'Criando conta…';
@@ -41,7 +48,13 @@ form.addEventListener('submit', async event => {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload), signal: AbortSignal.timeout(15000),
     });
-    const result = await response.json();
+    const result = await readAuthResponse(response);
+
+
+
+
+
+
     if (!response.ok) {
       showFeedback(result.error || 'Não foi possível cadastrar. Tente novamente.');
       const invalidNames = names.filter(name => Object.hasOwn(result.errors || {}, name));
@@ -62,8 +75,8 @@ form.addEventListener('submit', async event => {
     form.reset();
     showFeedback('Conta criada e salva no banco. Use o link Entrar para acessar sua conta.', true);
     feedback.focus();
-  } catch {
-    showFeedback('Não foi possível confirmar o cadastro. Confira sua conexão e tente novamente. Se a conta já tiver sido criada, o sistema avisará que o e-mail está cadastrado.');
+  } catch (error) {
+    showFeedback(error instanceof AuthResponseError ? error.message : 'Não foi possível confirmar o cadastro. Confira sua conexão e tente novamente. Se a conta já tiver sido criada, o sistema avisará que o e-mail está cadastrado.');
     feedback.focus();
   } finally {
     names.forEach(name => { fields.namedItem(name).readOnly = false; });

@@ -1,5 +1,7 @@
 # Preparar MySQL local — bloco 7.2
 
+Para preparar um banco remoto sem reutilizar o instalador local, consulte o [procedimento de migração 001](migrations/README.md).
+
 O backend usa `mysql2` para conversar com MySQL. O servidor MySQL é um processo separado do Node.js.
 
 ## 1. Instalação no Ubuntu deste computador
@@ -38,13 +40,13 @@ sudo mysql < backend/database/schema.sql
 
 O script cria `studyup` e três tabelas sem apagar registros. `IF NOT EXISTS` não atualiza uma tabela antiga: alterações futuras precisarão de migrações explícitas.
 
-- `usuarios`: identidade, e-mail único e hash da senha; ainda não há cadastro real.
+- `usuarios`: identidade, e-mail único e hash da senha; cadastro/login já usam o banco.
 - `disciplinas`: nome, cor e usuário proprietário.
 - `tarefas`: usuário proprietário, disciplina opcional, título, descrição, prazo, prioridade e conclusão.
 
-A chave estrangeira composta `(usuario_id, disciplina_id)` impede uma tarefa de apontar para a disciplina de outro usuário. Exclusão de disciplina com tarefas é bloqueada. Isso complementa a autorização que ainda será implementada na API; não impede, sozinho, uma consulta SELECT de ler registros de outro usuário.
+A chave estrangeira composta `(usuario_id, disciplina_id)` impede uma tarefa de apontar para a disciplina de outro usuário. Exclusão de disciplina com tarefas é bloqueada. Isso complementa a autorização por sessão implementada na API; não impede, sozinho, uma consulta SELECT de ler registros de outro usuário.
 
-`data_limite` e `concluida_em` usam DATETIME com horário civil de Fortaleza. Os campos de auditoria usam TIMESTAMP; sua apresentação dependerá do fuso da sessão MySQL. `dateStrings` evita conversões implícitas pelo driver. O tratamento dos horários será integrado às APIs antes de substituir os exemplos do frontend.
+`data_limite` e `concluida_em` usam DATETIME com horário civil de Fortaleza. Os campos de auditoria usam TIMESTAMP; sua apresentação dependerá do fuso da sessão MySQL. `dateStrings` evita conversões implícitas pelo driver. As APIs de tarefas preservam esses horários civis; o driver retorna datas em texto.
 
 ## 3. Criar um usuário exclusivo para a aplicação
 
@@ -95,4 +97,4 @@ Abra http://127.0.0.1:3000/api/status. Os resultados possíveis são:
 
 O módulo `backend/config/database.js` mantém um pool: um conjunto pequeno de conexões reutilizadas, em vez de abrir uma conexão nova a cada pedido. O pool é encerrado ao finalizar o servidor.
 
-Mesmo após conectar, o frontend continua em demonstração. A integração dos cadastros depende dos blocos de autenticação e APIs.
+Contas, disciplinas e tarefas já estão integradas ao banco. Projetos e notificações permanecem demonstrações. Sessões persistentes ainda são uma etapa futura.
