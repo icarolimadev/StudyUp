@@ -9,9 +9,18 @@ import { createSessionMiddleware, sessionIsValid } from './security/session.js';
 
 // Configurar a aplicação não abre uma porta. server.js faz a inicialização.
 export function createApp(authDependencies, sessionSettings, subjectModel, taskModel) {
-  const app = express();
-  app.disable('x-powered-by');
-  app.use(createSessionMiddleware(sessionSettings));
+  
+const app = express();
+
+app.disable('x-powered-by');
+
+// Reconhecer o proxy HTTPS do Render em produção.
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
+app.use(createSessionMiddleware(sessionSettings));
+
   app.use('/api', statusRoutes);
   app.use('/api/auth', createAuthRoutes(authDependencies, sessionSettings));
   app.use('/api/disciplinas', createSubjectRoutes(sessionSettings, subjectModel));
