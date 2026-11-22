@@ -6,6 +6,8 @@ import { createSubjectRoutes } from './routes/subject-routes.js';
 import { createTaskRoutes } from './routes/task-routes.js';
 import { posix } from 'node:path';
 import { createSessionMiddleware, sessionIsValid } from './security/session.js';
+import { TiDBSessionStore } from './security/tidb-session-store.js';
+
 
 // Configurar a aplicação não abre uma porta. server.js faz a inicialização.
 export function createApp(authDependencies, sessionSettings, subjectModel, taskModel) {
@@ -19,7 +21,17 @@ if (process.env.NODE_ENV === 'production') {
   app.set('trust proxy', 1);
 }
 
-app.use(createSessionMiddleware(sessionSettings));
+
+const sessionStore = sessionSettings?.store ??
+  (process.env.NODE_ENV === 'production'
+    ? new TiDBSessionStore()
+    : undefined);
+
+app.use(createSessionMiddleware({
+  ...sessionSettings,
+  store: sessionStore,
+}));
+
 
   app.use('/api', statusRoutes);
   app.use('/api/auth', createAuthRoutes(authDependencies, sessionSettings));
