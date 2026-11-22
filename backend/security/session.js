@@ -8,7 +8,7 @@ export const sessionLifetime = 2 * 60 * 60 * 1000;
 export function createSessionMiddleware({ store, lifetime = sessionLifetime } = {}) {
   return session({
     name: cookieName,
-    secret: randomBytes(32).toString('hex'),
+    secret: process.env.SESSION_SECRET || randomBytes(32).toString('hex'),
     store,
     resave: false,
     saveUninitialized: false,
