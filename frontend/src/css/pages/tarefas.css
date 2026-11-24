@@ -37,3 +37,17 @@
 @media (max-width: 359px) {
   .Tasks-filters { grid-template-columns: minmax(0, 1fr); }
 }
+
+@media (min-width: 64rem) {
+  .Tasks-periods { gap: .75rem; }
+  .Tasks-periods button { flex: 0 1 auto; padding-inline: 1.25rem; font-size: .875rem; }
+  .Tasks-filters { padding: 1.25rem; border: 1px solid var(--color-border); border-radius: 1rem; background: white; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .Tasks-search { grid-column: 1 / -1; }
+  .Tasks-list { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 1rem; }
+  .Tasks-card { min-width: 0; background: white; }
+  .Tasks-card-title { font-size: 1rem; }
+}
+@media (min-width: 80rem) {
+  .Tasks-filters { grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)); }
+  .Tasks-search { grid-column: auto; }
+}

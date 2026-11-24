@@ -30,3 +30,9 @@
 .Preferences-row input:disabled { cursor: default; opacity: .5; }
 .Preferences-feedback { color: var(--color-primary-hover); font-size: .8rem; }
 .Preferences :is(input, select, button):focus-visible { outline: 3px solid var(--color-primary); outline-offset: 3px; }
+
+@media (min-width: 64rem) {
+  .App-panel.Notifications, .App-panel.Preferences { max-width: 60rem; }
+  .Notifications, .Preferences { padding: 2rem; background: white; border: 1px solid var(--color-border); border-radius: 1.25rem; }
+  .Preferences-form > .Add-submit { justify-self: start; min-width: 15rem; }
+}

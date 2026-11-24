@@ -336,3 +336,19 @@
     margin-top: 20px;
   }
 }
+
+@media (min-width: 64rem) {
+  .UP-page { background: linear-gradient(110deg, #fffcf0, #ffffff 65%); }
+  .UP-shell { max-width: 80rem; }
+  .UP-step { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto 1fr; column-gap: 4rem; padding: 2rem 4rem 4rem; }
+  .UP-header { grid-column: 1 / -1; }
+  .UP-visual, .UP-content { align-self: center; }
+  .Sdudent-scene { width: min(100%, 28rem); }
+  .UP-content { text-align: left; margin-top: 0; }
+  .UP-title { font-size: clamp(2rem, 3vw, 3rem); line-height: 1.2; }
+  .UP-description { margin-top: 1.5rem; font-size: 1.125rem; line-height: 1.7; }
+  .UP-pagination { justify-content: flex-start; margin-block: 1.5rem; }
+  .UP-actions { max-width: 24rem; }
+  .UP-step::before { top: 25%; left: 10%; }
+  .UP-step::after { top: 20%; right: 55%; }
+}

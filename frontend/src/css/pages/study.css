@@ -215,3 +215,16 @@
     width: min(100%, 280px);
   }
 }
+
+@media (min-width: 64rem) {
+  .Study-page { background: linear-gradient(110deg, #fffcf0, #ffffff 65%); }
+  .Study-shell { max-width: 80rem; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto; align-items: center; gap: clamp(3rem, 6vw, 6rem); padding: 4rem; }
+  .Study-orbit { width: min(100%, 30rem); }
+  .Study-content { text-align: left; }
+  .Study-brand { justify-content: flex-start; }
+  .Study-wordmark { font-size: 2.25rem; }
+  .Study-title { margin-top: 2rem; font-size: clamp(2.5rem, 3.5vw, 3.5rem); line-height: 1.15; }
+  .Study-description { max-width: 30rem; font-size: 1.125rem; line-height: 1.7; }
+  .Study-description-break { display: none; }
+  .Study-start { max-width: 22rem; margin-top: 2rem; min-height: 3.5rem; }
+}

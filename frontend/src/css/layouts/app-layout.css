@@ -108,3 +108,38 @@
   .App-nav-link:hover { color: var(--color-primary-hover); }
   .App-nav-link:hover .App-nav-icon { background: var(--app-soft); color: var(--color-primary-hover); }
 }
+
+/* Desktop: a mesma navegação ocupa a lateral; o documento mantém a rolagem. */
+.App-nav-desktop { display: none; }
+@media (min-width: 64rem) {
+  .App-page { --app-sidebar-width: 14rem; --app-nav-height: 0rem; }
+  .App-shell { max-width: 100rem; padding-left: var(--app-sidebar-width); background: transparent; }
+  .App-header { min-height: 6rem; padding: 1.5rem clamp(2rem, 3vw, 3rem); border-bottom: 1px solid var(--color-border); background: var(--color-surface); }
+  .App-content { padding: 2.5rem clamp(2rem, 3vw, 3rem) 4rem; }
+  .App-panel { max-width: 76rem; min-width: 0; }
+  .App-panel h1 { font-size: clamp(2rem, 2.5vw, 2.5rem); }
+  .App-intro { font-size: 1rem; }
+  .App-nav {
+    inset: 0 auto 0 max(0px, calc((100vw - 100rem) / 2));
+    transform: none; width: var(--app-sidebar-width); max-width: none;
+    height: 100vh; height: 100dvh; min-height: 0;
+    display: flex; flex-direction: column; align-items: stretch; gap: .5rem;
+    padding: 2rem 1rem; overflow-y: auto; overscroll-behavior: contain;
+    border-top: 0; border-right: 1px solid var(--color-border); box-shadow: none;
+  }
+  .App-nav::before { content: 'Seu espaço de estudos'; padding: 0 .75rem 1.5rem; color: var(--app-muted); font-size: .8rem; font-weight: 600; }
+  .App-nav-link { flex: none; flex-direction: row; justify-content: flex-start; gap: .75rem; min-height: 3.25rem; padding: .5rem .75rem; border-radius: .85rem; font-size: .875rem; text-align: left; }
+  .App-nav-link[aria-current="page"] { background: var(--app-soft); }
+  .App-nav-icon, .App-nav-link--add .App-nav-icon { flex: none; width: 2.25rem; height: 2.25rem; margin: 0; }
+  .App-nav-link--add { margin-block: .5rem; }
+  .App-nav-desktop { display: flex; }
+  .App-nav-link:focus-visible { outline-offset: -3px; }
+  .App-page :is(input, select, textarea, button, a, summary) { scroll-margin-block: 1.5rem; }
+}
+@media (min-width: 90rem) {
+  .App-page { --app-sidebar-width: 16rem; }
+  .App-nav { padding-inline: 1.5rem; }
+}
+@media (min-width: 64rem) and (hover: hover) {
+  .App-nav-link:hover { background: #f4faf7; }
+}

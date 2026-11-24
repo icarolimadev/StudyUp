@@ -26,3 +26,11 @@
 .Projects-help { margin-top: 1rem; color: var(--app-muted); font-size: .75rem; }
 .Projects :is(button, input, summary):focus-visible { outline: 3px solid var(--color-primary); outline-offset: 3px; }
 @media (min-width: 768px) { .Projects-list { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; } }
+
+@media (min-width: 64rem) {
+  .Projects-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; align-items: start; }
+  .Projects-card { padding: 1.5rem; background: white; }
+}
+@media (min-width: 90rem) {
+  .Projects-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

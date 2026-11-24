@@ -513,3 +513,14 @@
     content: none;
   }
 }
+
+@media (min-width: 64rem) {
+  .Auth-page { background: radial-gradient(ellipse at top left, #fff8dc, transparent 60%), #f7f8fa; }
+  .Auth-shell { max-width: 42rem; padding: 3rem 0; }
+  .Auth-panel { min-height: 0; padding: 2.5rem 3rem; background: white; border: 1px solid var(--color-border); border-radius: 1.75rem; box-shadow: 0 16px 48px rgb(37 42 59 / 6%); }
+  .Auth-intro, .Auth-panel--signup .Auth-intro, .Auth-panel--recovery .Auth-intro { margin-top: 2rem; }
+  .Auth-title { font-size: 2.25rem; }
+}
+@media (min-width: 64rem) and (max-height: 50rem) {
+  .Auth-shell { padding-block: 1.5rem; }
+}

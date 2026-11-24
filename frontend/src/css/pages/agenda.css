@@ -27,3 +27,16 @@
 .Agenda-card.is-done .Agenda-card-title { text-decoration: line-through; }
 .Agenda-details { margin-top: .65rem; color: var(--color-text); font-size: .75rem; white-space: pre-wrap; overflow-wrap: anywhere; }
 .Agenda :is(input, button, summary):focus-visible { outline: 3px solid var(--color-primary); outline-offset: 3px; }
+
+@media (min-width: 64rem) {
+  .App-panel.Agenda { max-width: 62rem; }
+  .Agenda-modes { max-width: 30rem; }
+  .Agenda-date-nav { max-width: 36rem; margin-inline: auto; }
+  .Agenda-date-copy h2 { font-size: 1.25rem; }
+  .Agenda-controls { max-width: 24rem; }
+  .Agenda-timeline { background: white; padding: 2rem; border: 1px solid var(--color-border); border-radius: 1.25rem; }
+  .Agenda-slot { grid-template-columns: 4rem minmax(0, 1fr); gap: 1rem; min-height: 6rem; }
+  .Agenda-time, .Agenda-card-subject, .Agenda-card-type { font-size: .8rem; }
+  .Agenda-card { padding: 1rem 1.25rem; }
+  .Agenda-card-title { font-size: 1rem; }
+}

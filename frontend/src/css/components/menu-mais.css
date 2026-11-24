@@ -23,3 +23,8 @@
 .More-note { margin-top: 1rem; color: var(--app-muted); font-size: .7rem; }
 .More-dialog :is(a, button):focus-visible { outline: 3px solid var(--color-primary); outline-offset: 2px; }
 @media (max-width: 359px) { .Profile-header-actions { gap: .35rem; } .App-header { gap: .5rem; } }
+
+@media (min-width: 64rem) {
+  .More-dialog { inset: 0; margin: auto; max-height: calc(100dvh - 4rem); border-radius: 1.5rem; padding: 1.5rem 2rem; }
+  .More-handle { display: none; }
+}
