@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/assets/studyup-banner.svg" alt="StudyUp — mais clareza para estudar, mais espaço para evoluir." width="100%">
+
 
 # StudyUp
 
